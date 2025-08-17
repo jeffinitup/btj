@@ -1,17 +1,14 @@
 package com.jeffyjamzhd.btj;
 
-import btw.AddonHandler;
 import btw.BTWAddon;
-import com.jeffyjamzhd.btj.api.CurseDisplayManager;
 import com.jeffyjamzhd.btj.api.event.curse.EventCurse;
 import com.jeffyjamzhd.btj.command.CommandCurse;
 import com.jeffyjamzhd.btj.registry.BTJCurses;
+import com.jeffyjamzhd.btj.registry.BTJPacket;
+import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import net.minecraft.src.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 
 public class BetterThanJosh extends BTWAddon {
     public static final Logger LOGGER = LogManager.getLogger(BetterThanJosh.class);
@@ -23,15 +20,17 @@ public class BetterThanJosh extends BTWAddon {
     }
 
     @Override
+    public void preInitialize() {
+        MixinExtrasBootstrap.init();
+    }
+
+    @Override
     public void initialize() {
         LOGGER.info("{} Version {} Initializing...", this.getName(), this.getVersionString());
 
         EventCurse.register(new BTJCurses());
         registerAddonCommand(new CommandCurse());
-        registerPacketHandler(this.getModID() + "|curseList", (payload, player) -> {
-            DataInputStream stream = new DataInputStream(new ByteArrayInputStream(payload.data));
-            player.btj$getCurseManager().parseLocalList(stream);
-        });
+        BTJPacket.register(this);
 
         LOGGER.info("{} Initialized.", this.getName());
     }

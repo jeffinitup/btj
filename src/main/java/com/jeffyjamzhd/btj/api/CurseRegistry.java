@@ -1,7 +1,6 @@
 package com.jeffyjamzhd.btj.api;
 
 import com.jeffyjamzhd.btj.api.curse.ICurse;
-import net.minecraft.src.ResourceLocation;
 
 import java.util.*;
 import java.util.function.Consumer;

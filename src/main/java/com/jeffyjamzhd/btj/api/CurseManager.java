@@ -1,18 +1,15 @@
 package com.jeffyjamzhd.btj.api;
 
-import com.jeffyjamzhd.btj.BetterThanJosh;
 import com.jeffyjamzhd.btj.api.curse.ICurse;
+import com.jeffyjamzhd.btj.registry.BTJPacket;
 import net.minecraft.src.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import static com.jeffyjamzhd.btj.BetterThanJosh.LOGGER;
@@ -25,11 +22,13 @@ public class CurseManager {
     private boolean dirty = false;
 
     public void tickCallback(World world, EntityPlayer player) {
+        // Send sync packet if marked as dirty
         if (this.dirty && player instanceof EntityPlayerMP mp) {
-            sendSyncPacketToClient(mp.playerNetServerHandler, mp);
+            sendSyncPacketToClient(mp.playerNetServerHandler);
             this.dirty = false;
         }
 
+        // Tick curses
         for (ICurse curse : this.curses)
             curse.onTick(world, player);
     }
@@ -71,6 +70,7 @@ public class CurseManager {
                     curse.readNBT(curseTag);
                 }
             }
+            // Boy this dirty clean this up
             this.dirty = true;
         }
     }
@@ -86,7 +86,7 @@ public class CurseManager {
         if (!condition && curse != null) {
             this.curses.add(curse);
             if (player instanceof EntityPlayerMP mp)
-                sendSyncPacketToClient(mp.playerNetServerHandler, mp);
+                sendSyncPacketToClient(mp.playerNetServerHandler);
             return curse;
         }
         return null;
@@ -115,7 +115,7 @@ public class CurseManager {
             curse.onDeactivation(world, player);
             boolean result = this.curses.remove(curse);
             if (player instanceof EntityPlayerMP mp)
-                sendSyncPacketToClient(mp.playerNetServerHandler, mp);
+                sendSyncPacketToClient(mp.playerNetServerHandler);
             return result;
         }
         LOGGER.error("Malformed identifier provided or curse doesnt exist in player - {}", id);
@@ -133,9 +133,8 @@ public class CurseManager {
     /**
      * Syncs curses with client
      * @param handler Net handler
-     * @param player Player
      */
-    private void sendSyncPacketToClient(NetServerHandler handler, EntityPlayerMP player) {
+    private void sendSyncPacketToClient(NetServerHandler handler) {
         if (handler == null)
             return;
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
@@ -147,12 +146,13 @@ public class CurseManager {
                 dataStream.writeByte(curse.getIdentifier().length());
                 dataStream.writeBytes(curse.getIdentifier());
             }
+            dataStream.writeByte(Byte.MIN_VALUE);
         } catch (IOException e) {
             LOGGER.trace(e);
         }
 
         byte[] data = byteStream.toByteArray();
-        Packet250CustomPayload packet = new Packet250CustomPayload("btj|curseList", data);
+        Packet250CustomPayload packet = new Packet250CustomPayload(BTJPacket.PACKET_CURSE_S2C, data);
         handler.sendPacketToPlayer(packet);
     }
 
@@ -164,9 +164,10 @@ public class CurseManager {
         byte len;
         try {
             this.curses = new ArrayList<>();
-            while ((len = stream.readByte()) >= 0) {
+            EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
+            while ((len = stream.readByte()) != Byte.MIN_VALUE) {
                 String curse = new String(stream.readNBytes(len), StandardCharsets.US_ASCII);
-                this.applyCurse(curse, null);
+                this.applyCurse(curse, player.worldObj, player);
             }
         } catch (IOException e) {
             LOGGER.trace(e);

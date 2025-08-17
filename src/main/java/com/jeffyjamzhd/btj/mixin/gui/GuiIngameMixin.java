@@ -2,6 +2,7 @@ package com.jeffyjamzhd.btj.mixin.gui;
 
 import com.jeffyjamzhd.btj.api.CurseDisplayManager;
 import com.jeffyjamzhd.btj.api.extend.IGuiIngame;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.src.FontRenderer;
@@ -29,8 +30,12 @@ public abstract class GuiIngameMixin extends Gui implements IGuiIngame {
     }
 
     @Inject(method = "func_110327_a", at = @At("TAIL"))
-    private void renderCallback(int par1, int par2, CallbackInfo ci) {
-        this.curse_dm.renderCurses(this.mc.thePlayer, ((GuiIngame) (Object) this), par1, par2);
+    private void renderCallback(
+            int par1, int par2, CallbackInfo ci,
+            @Local(name = "var11") int left,
+            @Local(name = "var12") int right,
+            @Local(name = "var13") int height) {
+        this.curse_dm.renderCurses(this.mc.thePlayer, ((GuiIngame) (Object) this), left, right, height);
     }
 
     @Override

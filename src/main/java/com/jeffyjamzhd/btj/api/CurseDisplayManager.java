@@ -2,12 +2,15 @@ package com.jeffyjamzhd.btj.api;
 
 import com.jeffyjamzhd.btj.api.curse.ICurse;
 import com.jeffyjamzhd.btj.api.curse.ICurseBar;
-import com.jeffyjamzhd.btj.api.extend.IEntityPlayer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.GuiIngame;
+import net.minecraft.src.Minecraft;
+import net.minecraft.src.ResourceLocation;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -15,19 +18,35 @@ import java.util.List;
  */
 @Environment(EnvType.CLIENT)
 public class CurseDisplayManager {
+    private List<ICurseBar> sortedCurses = new ArrayList<>();
+
     /**
      * Renders all curse bars
      * @param player Player
-     * @param width HUD width
-     * @param height HUD height
+     * @param left HUD left margin
+     * @param right HUD right margin
+     * @param height HUD base height
      */
-    public void renderCurses(EntityPlayer player, GuiIngame gui, int width, int height) {
+    public void renderCurses(EntityPlayer player, GuiIngame gui, int left, int right, int height) {
         CurseManager man = player.btj$getCurseManager();
         List<ICurse> curses = man.getCurses();
-        for (ICurse curse : curses) {
-            if (curse instanceof ICurseBar curseBar) {
-                curseBar.drawBar(gui, width, height);
-            }
+
+        // Sort if necessary
+        if (curses.size() != sortedCurses.size())
+            sortCurses(curses);
+
+        // Render curses
+        int factor = 9;
+        ResourceLocation last = null;
+        for (ICurseBar curse : sortedCurses) {
+            // Bind texture
+            if (last != curse.getTexture())
+                Minecraft.getMinecraft().getTextureManager().bindTexture(curse.getTexture());
+
+            // Draw
+            curse.drawBar(gui, right - 81, height - factor);
+            factor += 12;
+            last = curse.getTexture();
         }
     }
 
@@ -37,5 +56,16 @@ public class CurseDisplayManager {
      */
     public void renderCurseGet(EntityPlayer player) {
 
+    }
+
+    /**
+     * Sorts curses from highest to lowest render priority
+     */
+    private void sortCurses(List<ICurse> curses) {
+        this.sortedCurses = curses.stream()
+                .filter(iCurse -> iCurse instanceof ICurseBar)
+                .map(iCurse -> (ICurseBar) iCurse)
+                .sorted(Comparator.comparingInt((ICurseBar::getDisplayPriority)))
+                .toList();
     }
 }

@@ -1,10 +1,7 @@
 package com.jeffyjamzhd.btj.curse;
 
 import com.jeffyjamzhd.btj.api.curse.AbstractCurseMeter;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.GuiIngame;
-import net.minecraft.src.ResourceLocation;
-import net.minecraft.src.World;
+import net.minecraft.src.*;
 
 import static com.jeffyjamzhd.btj.BetterThanJosh.LOGGER;
 
@@ -23,7 +20,6 @@ public class CurseMITE extends AbstractCurseMeter {
 
     @Override
     public void drawBar(GuiIngame gui, int width, int height) {
-        gui.drawString(gui.btj$getFontRenderer(), "Test!", 70, 60,  0xFFFFFFFF);
-        LOGGER.info("TEST");
+        gui.drawTexturedModalRect(width, height, 0, 8, 91, 8);
     }
 }
