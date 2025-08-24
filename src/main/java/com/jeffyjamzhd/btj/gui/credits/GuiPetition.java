@@ -2,31 +2,32 @@ package com.jeffyjamzhd.btj.gui.credits;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.src.EnumChatFormatting;
-import net.minecraft.src.GuiButton;
-import net.minecraft.src.GuiScreen;
-import net.minecraft.src.I18n;
+import net.minecraft.src.*;
 
 import java.io.IOException;
 
 @Environment(EnvType.CLIENT)
-public class GuiCredits extends GuiScreen {
+public class GuiPetition extends GuiScreen {
     protected GuiScreen parentScreen;
     protected String screenTitle;
     protected String[] screenDesc = new String[2];
-    protected GuiCreditsList list;
+    protected GuiPetitionList list;
 
-    public GuiCredits(GuiScreen parent) {
+    public GuiPetition(GuiScreen parent) {
         this.parentScreen = parent;
     }
 
     @Override
     public void initGui() {
-        this.screenTitle = I18n.getString("menu.credits");
-        this.screenDesc[0] = I18n.getString("menu.credits.desc1");
-        this.screenDesc[1] = I18n.getString("menu.credits.desc2");
-        this.list = new GuiCreditsList(this, this.mc, this.fontRenderer);
-        this.buttonList.add(new GuiButton(1, this.width / 2 - 150, this.height - 30, 300, 20, I18n.getString("menu.credits.back")));
+        this.screenTitle = I18n.getString("menu.signers");
+        this.screenDesc[0] = I18n.getString("menu.signers.desc1");
+        this.screenDesc[1] = I18n.getString("menu.signers.desc2");
+        try {
+            this.list = new GuiPetitionList(this, this.mc, this.fontRenderer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        this.buttonList.add(new GuiButton(1, this.width / 2 - 150, this.height - 30, 300, 20, I18n.getString("menu.signers.back")));
     }
 
     @Override

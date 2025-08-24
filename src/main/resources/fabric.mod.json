@@ -33,6 +33,7 @@
   "mixins": [
     "btj.mixins.json"
   ],
+  "accessWidener": "btj.accesswidener",
   "depends": {
     "fabricloader": ">=0.14.19",
     "minecraft": "1.6.4"

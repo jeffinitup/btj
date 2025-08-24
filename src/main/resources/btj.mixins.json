@@ -4,14 +4,24 @@
   "package": "com.jeffyjamzhd.btj.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "entity.EntityPlayerMixin"
+    "block.BlockMixin",
+    "entity.EntityPlayerMixin",
+    "item.ItemFoodMixin",
+    "network.MinecraftServerMixin"
   ],
   "client": [
     "MinecraftMixin",
     "gui.GuiIngameMixin",
-    "gui.GuiMainMenuMixin"
+    "gui.GuiMainMenuMixin",
+    "render.EntityRendererMixin"
+  ],
+  "server": [
+    "block.BlockLeavesBaseMixin"
   ],
   "injectors": {
     "defaultRequire": 1
+  },
+  "mixinextras": {
+    "minVersion": "0.5.0"
   }
 }

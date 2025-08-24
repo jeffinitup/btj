@@ -1,64 +1,27 @@
 package com.jeffyjamzhd.btj.gui.credits;
 
 import com.jeffyjamzhd.btj.BetterThanJosh;
-import net.fabricmc.loader.impl.util.StringUtil;
 import net.minecraft.src.*;
-import org.spongepowered.include.com.google.common.base.Charsets;
+import org.lwjgl.opengl.GL11;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.jeffyjamzhd.btj.BetterThanJosh.LOGGER;
-
 public class GuiCreditsList extends GuiSlot {
-    private static ResourceLocation namesPath = BetterThanJosh.idOf("texts/signees.txt");
+    private static final List<CreditsEntry> entries = new ArrayList<>();
 
-    private Minecraft mc;
-    private GuiCredits credits;
-    private FontRenderer fontRenderer;
-    private List<String> names;
+    private final GuiCredits credits;
+    private final FontRenderer fontRenderer;
 
-    public GuiCreditsList(GuiCredits credits, Minecraft mc, FontRenderer fr) throws IOException {
-        super(mc, credits.width, credits.height, 64, credits.height - 40, fr.FONT_HEIGHT + 2);
+    public GuiCreditsList(GuiCredits credits, Minecraft mc, FontRenderer fr) {
+        super(mc, credits.width, credits.height, 64, credits.height - 40, 52);
         this.credits = credits;
-        this.mc = mc;
         this.fontRenderer = fr;
-
-        // Import credits
-        BufferedReader reader = null;
-        try {
-            this.names = new ArrayList<>();
-            InputStreamReader stream = new InputStreamReader(
-                    this.mc.getResourceManager().getResource(namesPath).getInputStream(), Charsets.UTF_8);
-            reader = new BufferedReader(stream);
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                line = line.trim();
-                if (!line.isEmpty())
-                    names.add(line);
-            }
-        } catch (IOException exception) {
-            LOGGER.error(exception);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException exception) {
-                    LOGGER.error(exception);
-                }
-            }
-        }
-
-        names = names.stream().map(StringUtil::capitalize).sorted().toList();
     }
 
     @Override
     protected int getSize() {
-        return this.names.size();
+        return entries.size();
     }
 
     @Override
@@ -76,12 +39,44 @@ public class GuiCreditsList extends GuiSlot {
 
     @Override
     protected void drawSlot(int i, int j, int k, int l, Tessellator tessellator) {
-        int width = this.fontRenderer.getStringWidth(names.get(i));
-        this.fontRenderer.drawStringWithShadow(names.get(i), this.credits.width / 2 - (width / 2), k, 0xFFFFFFFF);
+        TextureManager man = Minecraft.getMinecraft().getTextureManager();
+        CreditsEntry entry = entries.get(i); 
+        man.bindTexture(entry.texture);
+
+        // Draw icon of entry
+        GL11.glColor4f(1F, 1F, 1F, 1F);
+        tessellator.startDrawingQuads();
+        tessellator.setColorOpaque_I(0xFFFFFF);
+        tessellator.addVertexWithUV(j, (k + 48), 0F, 0F, 1F);
+        tessellator.addVertexWithUV((j + 48), (k + 48), 0F, 1F, 1F);
+        tessellator.addVertexWithUV((j + 48), k, 0F, 1F, 0F);
+        tessellator.addVertexWithUV(j, k, 0F, 0F, 0F);
+        tessellator.draw();
+
+        // Draw entry text
+        String[] desc = I18n.getString(entry.desc).split("&&");
+        int offset = 0;
+
+        this.fontRenderer.drawStringWithShadow(I18n.getString(entry.name), j + 52, k + 1, 0xFFFFFF);
+        for (String string : desc) {
+            this.fontRenderer.drawStringWithShadow(string, j + 52, k + 12 + (10 * offset), 0x888888);
+            offset++;
+        }
     }
 
     @Override
     protected int getScrollBarX() {
         return this.credits.width - 6;
+    }
+
+    record CreditsEntry(ResourceLocation texture, String name, String desc) {}
+
+    static {
+        // Define credits entries here
+        CreditsEntry jeff = new CreditsEntry(BetterThanJosh.idOf("textures/gui/credits/jeff.png"), "credits.jeff.name", "credits.jeff.desc");
+        CreditsEntry franzy = new CreditsEntry(BetterThanJosh.idOf("textures/gui/credits/franzy.png"), "credits.franzy.name", "credits.franzy.desc");
+        CreditsEntry kitty = new CreditsEntry(BetterThanJosh.idOf("textures/gui/credits/kitty.png"), "credits.kitty.name", "credits.kitty.desc");
+
+        entries.addAll(List.of(jeff, franzy, kitty));
     }
 }

@@ -3,8 +3,7 @@ package com.jeffyjamzhd.btj;
 import btw.BTWAddon;
 import com.jeffyjamzhd.btj.api.event.curse.EventCurse;
 import com.jeffyjamzhd.btj.command.CommandCurse;
-import com.jeffyjamzhd.btj.registry.BTJCurses;
-import com.jeffyjamzhd.btj.registry.BTJPacket;
+import com.jeffyjamzhd.btj.registry.*;
 import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import net.minecraft.src.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
@@ -30,7 +29,11 @@ public class BetterThanJosh extends BTWAddon {
 
         EventCurse.register(new BTJCurses());
         registerAddonCommand(new CommandCurse());
+
+        BTJItems.register();
         BTJPacket.register(this);
+        BTJSound.register();
+        BTJStatusEffects.createStatuses();
 
         LOGGER.info("{} Initialized.", this.getName());
     }

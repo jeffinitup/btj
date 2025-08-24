@@ -33,7 +33,7 @@ repositories {
 
 loom {
 	setIntermediaryUrl('https://maven.legacyfabric.net/net/legacyfabric/intermediary/%1$s/intermediary-%1$s-v2.jar');
-	//accessWidenerPath = file('src/main/resources/<NAME>.accesswidener')
+	accessWidenerPath = file('src/main/resources/btj.accesswidener')
 	addMinecraftJarProcessor(
 			BTWJarReplacer, "BTWJarReplacer", projectDir.toString()
 	)
@@ -64,7 +64,7 @@ dependencies {
 	implementation 'com.google.code.gson:gson:2.2.2'
 
 	// Mixin extras ^^
-	shadow(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1"))
+	shadow(annotationProcessor("io.github.llamalad7:mixinextras-common:0.5.0"))
 
 	implementation group: 'it.unimi.dsi', name: 'fastutil', version: '8.5.12'
 }

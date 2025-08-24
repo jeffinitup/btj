@@ -2,6 +2,7 @@ package com.jeffyjamzhd.btj.mixin.gui;
 
 import com.jeffyjamzhd.btj.BetterThanJosh;
 import com.jeffyjamzhd.btj.gui.credits.GuiCredits;
+import com.jeffyjamzhd.btj.gui.credits.GuiPetition;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.src.*;
@@ -53,12 +54,15 @@ public abstract class GuiMainMenuMixin extends GuiScreen {
 
     @Inject(method = "addSingleplayerMultiplayerButtons", at = @At("TAIL"))
     private void addCreditsButton(int par1, int par2, CallbackInfo ci) {
-        this.buttonList.add(new GuiButton(3000, this.width / 2 - 100, par1 + par2 * 2, I18n.getString("menu.credits")));
+        this.buttonList.add(new GuiButton(3000, this.width / 2 - 100, par1 + par2 * 2, 98, 20, I18n.getString("menu.credits")));
+        this.buttonList.add(new GuiButton(3001, this.width / 2 + 2, par1 + par2 * 2, 98, 20, I18n.getString("menu.signers")));
     }
 
     @Inject(method = "actionPerformed", at = @At("TAIL"))
     private void addCreditsFunction(GuiButton button, CallbackInfo ci) throws IOException {
         if (button.id == 3000)
             this.mc.displayGuiScreen(new GuiCredits(this));
+        if (button.id == 3001)
+            this.mc.displayGuiScreen(new GuiPetition(this));
     }
 }

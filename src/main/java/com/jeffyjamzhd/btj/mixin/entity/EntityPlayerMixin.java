@@ -39,7 +39,7 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements IEnt
         this.curseManager.writeNBT(tag, ((EntityPlayer) (Object) this));
     }
 
-    @Inject(method = "readModDataFromNBT", at = @At("TAIL"))
+    @Inject(method = "readModDataFromNBT", at = @At("HEAD"))
     private void curseReadCallback(NBTTagCompound tag, CallbackInfo ci) {
         this.curseManager.readNBT(tag, ((EntityPlayer) (Object) this));
     }

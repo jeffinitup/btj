@@ -1,4 +1,50 @@
-menu.credits=Those Responsible
-menu.credits.desc1=The following individuals have signed a petition
-menu.credits.desc2=to bring forth this addon's development
-menu.credits.back=Curse you, Franzy!
+menu.credits=Credits
+menu.credits.desc1=The following individuals are responsible for this
+menu.credits.desc2=mess of an addon
+menu.credits.back=Curse you, Jeff!
+menu.signers=Petition
+menu.signers.desc1=The following individuals have signed a petition
+menu.signers.desc2=to bring forth this addon's development
+menu.signers.back=Curse you, Franzy!
+
+credits.jeff.name=Jeff
+credits.jeff.desc=Addon author, debtor of Josh, proud&&father, happily married, divorced,&&and renowned court jester
+credits.franzy.name=Franzy14
+credits.franzy.desc=Design assistance, Josh lore&&enthusiast, tech support god.&&Allegedly is a "Harold."
+credits.kitty.name=kittycat8332
+credits.kitty.desc=Seed texture, artisan, drawer of&&things and stuff
+
+curse.btj.mite.name=Curse of MiTE
+curse.btj.mite.desc=Eat seeds like the animal you are...
+curse.btj.corn.name=Curse of Corn
+curse.btj.corn.desc=Are you shucking kidding me?
+curse.btj.fps.name=Curse of Power Saver
+curse.btj.fps.desc=Minecraft's most performant mod!
+curse.btj.chocolate.name=Curse of Cocoa
+curse.btj.chocolate.desc=Wait... this isn't chocolate!
+curse.btj.aura.name=Curse of Odor
+curse.btj.aura.desc=It's called aura, Mom!
+curse.btj.water.name=Curse of Thirst
+curse.btj.water.desc="Wouldn't it be cool if there was a thirst meter?"
+curse.btj.oats.name=Curse of... what?
+curse.btj.oats.desc=Who is this guy?
+curse.btj.mine.name=Curse of Mining
+curse.btj.mine.desc=I came to dig, dig, dig, dig!
+curse.btj.mitosis.name=Curse of Mitosis
+curse.btj.mitosis.desc=More is better, right?
+
+item.grassSeed.name=Grass Seed
+item.caneShucking.name=Sugarcane Peeling
+item.peeledCane.name=Peeled Sugarcane
+
+status.craving.craving=Craving
+status.craving.fiending=Fiending
+status.craving.malnourished=Malnourished
+status.thirsty.parched=Parched
+status.thirsty.thirsty=Thirsty
+status.thirsty.dehydrated=Dehydrated
+status.poop.imminent=!!Poop Imminent!!
+status.wrist.sore=Sore
+status.wrist.aching=Aching
+status.wrist.broken=Broken Wrist
+

@@ -10,9 +10,9 @@
         <option name="outRefMapFile" value="$PROJECT_DIR$/build/classes/java/main/Better Than Josh-refmap.json" />
         <option name="quiet" value="true" />
         <processorPath useClasspath="false">
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.llamalad7/mixinextras-common/0.4.1/a7f425cc49de7f10d008a9a676f5f023ebac13bb/mixinextras-common-0.4.1.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.llamalad7/mixinextras-common/0.5.0/286da96036621082491d971dfc62bee8fc37d161/mixinextras-common-0.5.0.jar" />
         </processorPath>
-        <module name="My_Addon.main" />
+        <module name="Better_Than_Josh.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="17" />
