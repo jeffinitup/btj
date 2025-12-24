@@ -1,6 +1,6 @@
 package com.jeffyjamzhd.btj.api.curse;
 
-import btw.world.util.BlockPos;
+import api.world.BlockPos;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
@@ -14,14 +14,14 @@ public interface IPlayerEvents {
      * @param player Player who consumed food
      * @param item ItemStack of food
      */
-    default void onFoodConsume(EntityPlayer player, ItemStack item) {};
+    default void onFoodConsume(EntityPlayer player, ItemStack item) {}
 
     /**
      * Triggered upon successful block placement
      * @param player Player who placed block
      * @param block Block that was placed
      */
-    default void onBlockPlace(EntityPlayer player, Block block) {};
+    default void onBlockPlace(EntityPlayer player, Block block) {}
 
     /**
      * Triggered upon successful block break
@@ -30,5 +30,5 @@ public interface IPlayerEvents {
      * @param pos Block position
      * @param meta Block metadata
      */
-    default void onBlockBreak(EntityPlayer player, int block_id, BlockPos pos, int meta) {};
+    default void onBlockBreak(EntityPlayer player, int block_id, BlockPos pos, int meta) {}
 }

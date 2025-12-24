@@ -1,7 +1,7 @@
 package com.jeffyjamzhd.btj.registry;
 
-import btw.util.status.StatusEffect;
-import btw.util.status.StatusEffectBuilder;
+import api.util.status.StatusEffect;
+import api.util.status.StatusEffectBuilder;
 import com.jeffyjamzhd.btj.api.CurseManager;
 import com.jeffyjamzhd.btj.api.curse.ICurse;
 import com.jeffyjamzhd.btj.curse.CurseMITE;

@@ -1,6 +1,6 @@
 package com.jeffyjamzhd.btj.api;
 
-import btw.world.util.BlockPos;
+import api.world.BlockPos;
 import com.jeffyjamzhd.btj.api.curse.ICurse;
 import com.jeffyjamzhd.btj.api.curse.IPlayerEvents;
 import com.jeffyjamzhd.btj.registry.BTJPacket;

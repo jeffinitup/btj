@@ -6,8 +6,12 @@
   "mixins": [
     "block.BlockMixin",
     "entity.EntityPlayerMixin",
+    "inventory.InventoryBasicMixin",
+    "inventory.InventoryPlayerMixin",
     "item.ItemFoodMixin",
-    "network.MinecraftServerMixin"
+    "item.ItemMixin",
+    "network.MinecraftServerMixin",
+    "network.PacketMixin"
   ],
   "client": [
     "MinecraftMixin",

@@ -1,15 +1,13 @@
 package com.jeffyjamzhd.btj.api.extend;
 
-import btw.util.sounds.AddonSoundRegistryEntry;
-import btw.util.sounds.BTWSoundManager;
-
-import java.util.HashSet;
+import api.util.AddonSoundRegistryEntry;
+import btw.util.BTWSounds;
 
 public interface IBTWSoundManager {
     /**
      * Returns sound manager
      */
-    default BTWSoundManager btj$get() {
+    default BTWSounds btj$get() {
         return null;
     }
 

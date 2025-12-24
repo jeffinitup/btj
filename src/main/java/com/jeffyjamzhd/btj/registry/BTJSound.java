@@ -1,6 +1,6 @@
 package com.jeffyjamzhd.btj.registry;
 
-import btw.util.sounds.AddonSoundRegistryEntry;
+import api.util.AddonSoundRegistryEntry;
 import com.jeffyjamzhd.btj.BetterThanJosh;
 
 public class BTJSound {

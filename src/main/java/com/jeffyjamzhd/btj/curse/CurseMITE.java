@@ -1,6 +1,6 @@
 package com.jeffyjamzhd.btj.curse;
 
-import btw.world.util.BlockPos;
+import api.world.BlockPos;
 import com.jeffyjamzhd.btj.api.curse.AbstractCurseMeter;
 import com.jeffyjamzhd.btj.api.curse.ICurse;
 import com.jeffyjamzhd.btj.api.curse.IPlayerEvents;

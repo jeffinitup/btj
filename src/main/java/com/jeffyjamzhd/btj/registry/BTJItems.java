@@ -1,6 +1,5 @@
 package com.jeffyjamzhd.btj.registry;
 
-import btw.AddonHandler;
 import com.jeffyjamzhd.btj.BetterThanJosh;
 import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.ItemFood;

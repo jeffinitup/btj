@@ -26,7 +26,10 @@ repositories {
 		url = 'https://maven.glass-launcher.net/babric'
 	}
 	maven {
-		url file('mavenRepo')
+		url = "https://api.modrinth.com/maven"
+	}
+	maven {
+		url 'https://btw-community.github.io/btw-mvn/'
 	}
 	mavenCentral() //For fastutil
 }
@@ -57,14 +60,14 @@ dependencies {
 	implementation "org.lwjgl.lwjgl:lwjgl-platform:${lwjglVersion}"
 
 	implementation fileTree(dir: "libs", include: "**.zip")
+	modImplementation fileTree(dir: "libs\\mods", include: "**.jar")
 
 	implementation 'com.google.guava:guava:14.0.1'
 
 	// This is what MC 1.6 uses
 	implementation 'com.google.code.gson:gson:2.2.2'
 
-	// Mixin extras ^^
-	shadow(annotationProcessor("io.github.llamalad7:mixinextras-common:0.5.0"))
+	implementation 'com.typesafe:config:1.4.5'
 
 	implementation group: 'it.unimi.dsi', name: 'fastutil', version: '8.5.12'
 }
@@ -121,12 +124,26 @@ loom {
 	targetCompatibility = JavaVersion.VERSION_17
 }
 
-runClient {
-	dependsOn(jar)
-}
+tasks.register('copyBtwJar', Copy) {
+	def depInter = dependencies.create("maven.modrinth:btwce:${project.btw_version}:intermediary")
+	def depDoc = dependencies.create("maven.modrinth:btwce:${project.btw_version}:javadoc")
+	def depMappings = dependencies.create("btw.community:mappings:1.0.3")
 
-runServer {
-	dependsOn(jar)
+	def config = configurations.detachedConfiguration(depInter, depDoc, depMappings)
+	config.transitive = false
+
+	from config
+	into file("build_BTW/tmp/BTW_dev")
+
+	rename { String fileName ->
+		if (fileName.contains("javadoc")) {
+			return "BTW-CE-Intermediary-javadoc.jar"
+		}
+		if (fileName.contains("mappings")) {
+			return "BTW-CE-mappings.jar"
+		}
+		return "BTW-CE-Intermediary.jar"
+	}
 }
 
 class BTWJarReplacer implements MinecraftJarProcessor<Spec> {
@@ -180,4 +197,5 @@ class BTWJarReplacer implements MinecraftJarProcessor<Spec> {
 			}
 		}
 	}
+
 }

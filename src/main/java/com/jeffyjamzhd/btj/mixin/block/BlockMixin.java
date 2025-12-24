@@ -1,6 +1,6 @@
 package com.jeffyjamzhd.btj.mixin.block;
 
-import btw.world.util.BlockPos;
+import api.world.BlockPos;
 import com.jeffyjamzhd.btj.api.CurseManager;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;

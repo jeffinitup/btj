@@ -1,6 +1,6 @@
 package com.jeffyjamzhd.btj.status;
 
-import btw.util.status.StatusCategory;
+import api.util.status.StatusCategory;
 
 public enum BTJStatusCategory implements StatusCategory {
     CRAVING("craving"),

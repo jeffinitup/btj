@@ -1,6 +1,6 @@
 package com.jeffyjamzhd.btj;
 
-import btw.BTWAddon;
+import api.BTWAddon;
 import com.jeffyjamzhd.btj.api.event.curse.EventCurse;
 import com.jeffyjamzhd.btj.command.CommandCurse;
 import com.jeffyjamzhd.btj.registry.*;

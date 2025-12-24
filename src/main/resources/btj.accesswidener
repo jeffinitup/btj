@@ -1,2 +1,2 @@
 accessWidener v1 named
-accessible method btw/util/status/StatusEffectBuilder <init> (ILbtw/util/status/StatusCategory;)V
+accessible method api/util/status/StatusEffectBuilder <init> (ILapi/util/status/StatusCategory;)V
