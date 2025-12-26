@@ -1,5 +1,6 @@
 package com.jeffyjamzhd.btj.api;
 
+import com.google.common.collect.HashBiMap;
 import com.jeffyjamzhd.btj.api.curse.ICurse;
 
 import java.util.*;
@@ -12,7 +13,7 @@ import static com.jeffyjamzhd.btj.BetterThanJosh.LOGGER;
  */
 public class CurseRegistry {
     public static final CurseRegistry INSTANCE = new CurseRegistry();
-    private static final HashMap<String, ICurse> CURSES = new HashMap<>();
+    private static final HashBiMap<String, Class<? extends ICurse>> CURSES = HashBiMap.create();
     private static final Consumer<CurseInfo> REGISTRY = CurseRegistry::consumeCurse;
 
     /**
@@ -27,17 +28,23 @@ public class CurseRegistry {
      * Puts a curse object into the registry
      * @param curse Curse to register
      */
-    public void registerCurse(String id, ICurse curse) {
+    public void registerCurse(String id, Class<? extends ICurse> curse) {
         LOGGER.info("Incoming curse - {}", id);
-        curse.setIdentifier(id);
         REGISTRY.accept(new CurseInfo(id, curse));
     }
 
     /**
      * Gets a specific curse from the registry
      */
-    public ICurse getCurse(String id) {
+    public Class<? extends ICurse> getCurse(String id) {
         return CURSES.get(id);
+    }
+
+    /**
+     * Gets a specific curse's identifier from the registry
+     */
+    public String getIdentifier(Class<? extends ICurse> curse) {
+        return CURSES.inverse().get(curse);
     }
 
     /**
@@ -45,12 +52,12 @@ public class CurseRegistry {
      * @param rng Random number generator
      * @return A random curse
      */
-    public ICurse getRandomCurse(Random rng) {
+    public Class<? extends ICurse> getRandomCurse(Random rng) {
         Object[] values = CURSES.values().toArray();
-        return (ICurse) values[rng.nextInt(values.length)];
+        return (Class<? extends ICurse>) values[rng.nextInt(values.length)];
     }
 
-    public HashMap<String, ICurse> getCurses() {
+    public HashBiMap<String, Class<? extends ICurse>> getCurses() {
         return CURSES;
     }
 
@@ -58,5 +65,5 @@ public class CurseRegistry {
         return CURSES.keySet().stream().toList();
     }
 
-    private record CurseInfo(String id, ICurse curse) {}
+    private record CurseInfo(String id, Class<? extends ICurse> curse) {}
 }

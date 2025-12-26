@@ -13,14 +13,20 @@ import java.util.List;
 public class BTJPacket {
     public static String PACKET_CURSE_S2C = "btj|curseList";
     public static String PACKET_CURSE_MITE_S2C = "btj|curseMiTE";
+    public static String PACKET_CURSE_THIRST_S2C = "btj|curseThirst";
 
     public static void register(BetterThanJosh mod) {
+        // Curse list sync packet
         mod.registerPacketHandler(PACKET_CURSE_S2C, (payload, player) -> {
             DataInputStream stream = new DataInputStream(new ByteArrayInputStream(payload.data));
             player.btj$getCurseManager().parseLocalList(stream);
         });
+
+        // Generic curse packets
         mod.registerPacketHandler(PACKET_CURSE_MITE_S2C, (payload, player) ->
                 genericCursePayload(payload, player, "btj:mite"));
+        mod.registerPacketHandler(PACKET_CURSE_THIRST_S2C, (payload, player) ->
+                genericCursePayload(payload, player, "btj:thirst"));
     }
 
     private static void genericCursePayload(Packet250CustomPayload payload, EntityPlayer player, String identifier) {

@@ -1,15 +1,46 @@
 package com.jeffyjamzhd.btj.api.curse;
 
+import com.jeffyjamzhd.btj.api.CurseRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.src.*;
 
 import java.io.DataInputStream;
 
 public class AbstractCurse implements ICurse {
+    /**
+     * Identifier tied to this curse
+     */
     private String identifier;
+
+    /**
+     * Curse display strings (the things that show up in the curse banner)
+     */
+    @Environment(EnvType.CLIENT)
     private String[] displayStrings;
+
+    /**
+     * Whether this curse is marked for an update
+     */
     protected boolean dirty;
+
+    public AbstractCurse() {
+        this.dirty = true;
+        this.init();
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+            this.clientInit();
+        }
+    }
+
+    @Override
+    public void init() {
+        this.identifier = CurseRegistry.INSTANCE.getIdentifier(this.getClass());
+    }
+
+    @Override
+    public void clientInit() {
+    }
 
     @Override
     public String getIdentifier() {
@@ -17,6 +48,7 @@ public class AbstractCurse implements ICurse {
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void setDisplayStrings(String[] strings) {
         this.displayStrings = strings;
     }
@@ -27,6 +59,7 @@ public class AbstractCurse implements ICurse {
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public String[] getDisplayStrings() {
         return displayStrings;
     }
@@ -39,7 +72,7 @@ public class AbstractCurse implements ICurse {
     @Override
     public void onTick(World world, EntityPlayer player) {
         if (this.dirty && player instanceof EntityPlayerMP mp) {
-            syncToClient(mp.playerNetServerHandler);
+            this.syncToClient(mp.playerNetServerHandler);
             this.dirty = false;
         }
     }

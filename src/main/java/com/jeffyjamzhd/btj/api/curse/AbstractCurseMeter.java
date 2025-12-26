@@ -1,5 +1,6 @@
 package com.jeffyjamzhd.btj.api.curse;
 
+import com.jeffyjamzhd.btj.BetterThanJosh;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.src.*;
@@ -7,6 +8,11 @@ import net.minecraft.src.*;
 import java.util.Random;
 
 public class AbstractCurseMeter extends AbstractCurse implements ICurseBar {
+    /**
+     * Base texture BTJ curse meters use
+     */
+    private static final ResourceLocation CURSES_TEX = BetterThanJosh.idOf("textures/gui/curse/tex.png");
+
     /**
      * Draw priority
      */
@@ -30,19 +36,20 @@ public class AbstractCurseMeter extends AbstractCurse implements ICurseBar {
     /**
      * Texture location
      */
+    @Environment(EnvType.CLIENT)
     private ResourceLocation texture;
 
     /**
      * Texture rendering information
      */
     @Environment(EnvType.CLIENT)
-    private int textureX = 0;
+    private int textureX;
     @Environment(EnvType.CLIENT)
-    private int textureY = 0;
+    private int textureY;
     @Environment(EnvType.CLIENT)
-    private int sizeX = 0;
+    private int sizeX;
     @Environment(EnvType.CLIENT)
-    private int sizeY = 0;
+    private int sizeY;
 
     /**
      * Chance for this each pip to shake
@@ -56,8 +63,14 @@ public class AbstractCurseMeter extends AbstractCurse implements ICurseBar {
     @Environment(EnvType.CLIENT)
     private final int[] shakeOffsets = new int[10];
 
-    public AbstractCurseMeter(ResourceLocation texture) {
-        this.setTexture(texture);
+    public AbstractCurseMeter() {
+        super();
+    }
+
+    @Override
+    public void clientInit() {
+        super.clientInit();
+        this.setTexture(CURSES_TEX);
     }
 
     @Override
@@ -67,11 +80,13 @@ public class AbstractCurseMeter extends AbstractCurse implements ICurseBar {
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public ResourceLocation getTexture() {
         return this.texture;
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void setTexture(ResourceLocation texture) {
         this.texture = texture;
     }
@@ -173,6 +188,6 @@ public class AbstractCurseMeter extends AbstractCurse implements ICurseBar {
 
     @Override
     public ICurse createInstance() {
-        return new AbstractCurseMeter(this.texture);
+        return new AbstractCurseMeter();
     }
 }

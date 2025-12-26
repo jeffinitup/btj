@@ -17,11 +17,13 @@ public interface ICurseBar {
     /**
      * Gets the texture of this curse's display
      */
+    @Environment(EnvType.CLIENT)
     ResourceLocation getTexture();
 
     /**
      * Set's this bar's texture
      */
+    @Environment(EnvType.CLIENT)
     void setTexture(ResourceLocation texture);
 
     /**

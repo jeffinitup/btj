@@ -1,5 +1,6 @@
 package com.jeffyjamzhd.btj.api.curse;
 
+import com.jeffyjamzhd.btj.api.CurseRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.src.EntityPlayer;
@@ -77,6 +78,17 @@ public interface ICurse {
      */
     @Environment(EnvType.CLIENT)
     void parseSyncPacket(DataInputStream stream);
+
+    /**
+     * Initializes the curse (common side)
+     */
+    void init();
+
+    /**
+     * Initializes the curse (client side) (e.g. gui code)
+     */
+    @Environment(EnvType.CLIENT)
+    void clientInit();
 
     /**
      * Creates an instance of this curse

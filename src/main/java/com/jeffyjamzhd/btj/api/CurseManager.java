@@ -12,8 +12,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +26,7 @@ import static com.jeffyjamzhd.btj.BetterThanJosh.LOGGER;
  * Manages callbacks for curses a player currently has
  */
 public class CurseManager {
-    private final List<ICurse> curses = new ArrayList<>();
+    private final HashMap<String, ICurse> curses = new HashMap<>();
     private boolean dirty = false;
     private boolean coldLoad = true;
 
@@ -38,7 +41,7 @@ public class CurseManager {
         }
 
         // Tick curses
-        for (ICurse curse : this.curses)
+        for (ICurse curse : this.curses.values())
             if (!player.capabilities.isCreativeMode)
                 curse.onTick(world, player);
     }
@@ -47,7 +50,7 @@ public class CurseManager {
      * Called upon food consumption
      */
     public void consumeFoodCallback(EntityPlayer player, ItemStack food) {
-        for (ICurse curse : this.curses)
+        for (ICurse curse : this.curses.values())
             if (curse instanceof IPlayerEvents cursePE && !player.capabilities.isCreativeMode)
                 cursePE.onFoodConsume(player, food);
     }
@@ -56,7 +59,7 @@ public class CurseManager {
      * Called upon successful block placement
      */
     public void blockPlaceCallback(EntityPlayer player, Block block) {
-        for (ICurse curse : this.curses)
+        for (ICurse curse : this.curses.values())
             if (curse instanceof IPlayerEvents cursePE && !player.capabilities.isCreativeMode)
                 cursePE.onBlockPlace(player, block);
     }
@@ -65,7 +68,7 @@ public class CurseManager {
      * Called upon successful block break
      */
     public void blockBrokenCallback(EntityPlayer player, int block_id, BlockPos pos, int meta) {
-        for (ICurse curse : this.curses)
+        for (ICurse curse : this.curses.values())
             if (curse instanceof IPlayerEvents cursePE)
                 cursePE.onBlockBreak(player, block_id, pos, meta);
     }
@@ -74,7 +77,7 @@ public class CurseManager {
         // Nest curse nbt into curses compound
         LOGGER.info("Writing curses to player {}", player.getCommandSenderName());
         NBTTagList nbtCurses = new NBTTagList("BTJCurse");
-        for (ICurse curse : this.curses) {
+        for (ICurse curse : this.curses.values()) {
             // Write in nested nbt
             LOGGER.info("Writing curse {} to player {}", curse.getIdentifier(), player.getCommandSenderName());
             NBTTagCompound data = new NBTTagCompound();
@@ -118,15 +121,21 @@ public class CurseManager {
      * @return Curse applied
      */
     private ICurse applyCurseSilent(String id, EntityPlayer player) {
-        ICurse curse = CurseRegistry.INSTANCE.getCurse(id);
-        boolean condition = this.curses.stream().anyMatch(iCurse -> iCurse.getIdentifier().equals(id));
+        Class<? extends ICurse> curse = CurseRegistry.INSTANCE.getCurse(id);
+        boolean condition = this.curses.values().stream().anyMatch(iCurse -> iCurse.getIdentifier().equals(id));
         if (!condition && curse != null) {
-            curse = curse.createInstance();
-            this.curses.add(curse);
-            if (player instanceof EntityPlayerMP mp) {
-                sendSyncPacketToClient(mp.playerNetServerHandler);
+            try {
+                ICurse curseInstance = curse.getConstructor().newInstance();
+                this.curses.put(id, curseInstance);
+                if (player instanceof EntityPlayerMP mp) {
+                    sendSyncPacketToClient(mp.playerNetServerHandler);
+                }
+                return curseInstance;
+            } catch (Exception e) {
+                LOGGER.error("Error applying curse {} to player {}", id, player.getCommandSenderName(), e);
+                LOGGER.trace(e.getMessage());
+                return null;
             }
-            return curse;
         }
         return null;
     }
@@ -159,10 +168,10 @@ public class CurseManager {
      * @return If the curse was successfully removed
      */
     public boolean removeCurse(String id, World world, EntityPlayer player) {
-        for (ICurse curse : this.curses) {
+        for (ICurse curse : this.curses.values()) {
             if (curse.getIdentifier().equals(id)) {
                 curse.onDeactivation(world, player);
-                boolean result = this.curses.remove(curse);
+                boolean result = this.curses.remove(id, curse);
                 if (player instanceof EntityPlayerMP mp)
                     sendSyncPacketToClient(mp.playerNetServerHandler);
                 return result;
@@ -177,17 +186,16 @@ public class CurseManager {
      * @param id Curse identifier
      */
     public boolean hasCurse(String id) {
-        return this.curses.stream()
-                .anyMatch(iCurse -> iCurse.getIdentifier().equals(id));
+        return this.curses.containsKey(id);
     }
 
     /**
      * Checks if a curse is currently within this CurseManager
-     * @param curse Registered curse
+     * @param clazz Registered curse class
      */
-    public boolean hasCurse(ICurse curse) {
-        return this.curses.stream()
-                .anyMatch(iCurse -> iCurse.getIdentifier().equals(curse.getIdentifier()));
+    public boolean hasCurse(Class<? extends ICurse> clazz) {
+        return this.curses.values().stream()
+                .anyMatch(iCurse -> iCurse.getClass().equals(clazz));
     }
 
     /**
@@ -195,7 +203,7 @@ public class CurseManager {
      * @return List of curses
      */
     public List<ICurse> getCurses() {
-        return this.curses;
+        return this.curses.values().stream().toList();
     }
 
     /**
@@ -204,7 +212,7 @@ public class CurseManager {
      * @return Curse instance
      */
     public Optional<ICurse> getCurse(String id) {
-        return this.curses.stream()
+        return this.curses.values().stream()
                 .filter(iCurse -> iCurse.getIdentifier().equals(id))
                 .findFirst();
     }
@@ -214,9 +222,9 @@ public class CurseManager {
      * @param curse Registered curse
      * @return Curse instance
      */
-    public Optional<ICurse> getCurse(ICurse curse) {
-        return this.curses.stream()
-                .filter(iCurse -> iCurse.getIdentifier().equals(curse.getIdentifier()))
+    public Optional<ICurse> getCurse(Class<? extends ICurse> curse) {
+        return this.curses.values().stream()
+                .filter(iCurse -> iCurse.getClass().equals(curse))
                 .findFirst();
     }
 
@@ -238,7 +246,7 @@ public class CurseManager {
             this.coldLoad = false;
 
             // Write size of curse id and curse id
-            for (ICurse curse : curses) {
+            for (ICurse curse : this.curses.values()) {
                 dataStream.writeByte(curse.getIdentifier().length());
                 dataStream.writeBytes(curse.getIdentifier());
             }
@@ -261,7 +269,7 @@ public class CurseManager {
         byte len;
         try {
             // Clear old curse list
-            List<ICurse> old = new ArrayList<>(this.curses);
+            HashMap<String, ICurse> old = (HashMap<String, ICurse>) this.curses.clone();
             this.curses.clear();
 
             // Get status of load
@@ -271,13 +279,13 @@ public class CurseManager {
             EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
             while ((len = stream.readByte()) != Byte.MIN_VALUE) {
                 String curse = new String(stream.readNBytes(len), StandardCharsets.US_ASCII);
-                if (!isColdLoad && old.stream().noneMatch(iCurse -> iCurse.getIdentifier().equals(curse)))
+                if (!isColdLoad && old.values().stream().noneMatch(iCurse -> iCurse.getIdentifier().equals(curse)))
                     this.applyCurse(curse, player.worldObj, player);
-                else if (old.stream().anyMatch(iCurse -> iCurse.getIdentifier().equals(curse))) {
-                    Optional<ICurse> existing = old.stream()
+                else if (old.values().stream().anyMatch(iCurse -> iCurse.getIdentifier().equals(curse))) {
+                    Optional<ICurse> existing = old.values().stream()
                             .filter(iCurse -> iCurse.getIdentifier().equals(curse))
                             .findFirst();
-                    existing.ifPresent(this.curses::add);
+                    existing.ifPresent(incomingCurse -> this.curses.put(curse, incomingCurse));
                 } else {
                     this.applyCurseSilent(curse, player);
                 }

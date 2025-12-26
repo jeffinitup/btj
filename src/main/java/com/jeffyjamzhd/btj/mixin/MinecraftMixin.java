@@ -18,7 +18,7 @@ public class MinecraftMixin {
     /**
      * Set window name to the TRUE one.
      */
-    @ModifyArg(method = "startGame", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/Display;setTitle(Ljava/lang/String;)V"))
+    @ModifyArg(method = "startGame", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/Display;setTitle(Ljava/lang/String;)V"), remap = false)
     private String setTitleToJosh(String newTitle) {
         return BetterThanJosh.getInstance().getPrettyVerisonString();
     }

@@ -33,16 +33,21 @@ public class CurseMITE extends AbstractCurseMeter implements IPlayerEvents {
         BiomeGenBase.plains.biomeID
     };
 
-    public CurseMITE(ResourceLocation texture) {
-        super(texture);
+    @Override
+    public void init() {
+        super.init();
+        this.setMaxValue(10000);
+        this.setValue(6000);
+    }
+
+    @Override
+    public void clientInit() {
+        super.clientInit();
         this.setDisplayStrings(new String[]{
                 "curse.btj.mite.name",
                 "curse.btj.mite.desc"
         });
-        this.setMaxValue(10000);
-        this.setValue(6000);
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
-            this.setRenderLocation(0, 0, 9, 9);
+        this.setRenderLocation(0, 0, 9, 9);
     }
 
     @Override
@@ -157,7 +162,7 @@ public class CurseMITE extends AbstractCurseMeter implements IPlayerEvents {
 
     @Override
     public ICurse createInstance() {
-        CurseMITE curse = new CurseMITE(this.getTexture());
+        CurseMITE curse = new CurseMITE();
         curse.setIdentifier(this.getIdentifier());
         curse.dirty = true;
         return curse;
