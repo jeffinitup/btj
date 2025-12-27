@@ -4,12 +4,11 @@
   "package": "com.jeffyjamzhd.btj.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "item.ItemFlintAndSteelMixin",
-    "item.ItemFlintAndSteelMixin",
     "block.BlockMixin",
     "entity.EntityPlayerMixin",
     "inventory.InventoryBasicMixin",
     "inventory.InventoryPlayerMixin",
+    "item.FireStarterItemMixin",
     "item.ItemFoodMixin",
     "item.ItemMixin",
     "item.ItemPotionMixin",

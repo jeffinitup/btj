@@ -37,9 +37,9 @@ item.grassSeed.name=Grass Seed
 item.bowlOfWater.name=Bowl of Water
 item.caneShucking.name=Sugarcane Peeling
 item.peeledCane.name=Peeled Sugarcane
-item.btj.FlintandLooseRock=Flint and Loose Rock
-item.btj.FlintandFlint=Flint and Flint
-item.btj.FlintandSoulforgedSteelNugget=Flint and Soulforged Steel Nugget
+item.flintAndLooseRock.name=Flint and Loose Rock
+item.flintAndFlint.name=Flint and Flint
+item.flintAndSoulforgedSteel.name=Flint and Soulforged Steel
 
 status.craving.craving=Craving
 status.craving.fiending=Fiending

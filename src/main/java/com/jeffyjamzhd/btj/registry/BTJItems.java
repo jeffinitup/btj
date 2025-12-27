@@ -1,8 +1,8 @@
 package com.jeffyjamzhd.btj.registry;
 
+import btw.item.BTWItems;
 import btw.item.items.SoupItem;
 import com.jeffyjamzhd.btj.BetterThanJosh;
-import com.jeffyjamzhd.btj.item.BowlItem;
 import com.jeffyjamzhd.btj.item.SoupWaterItem;
 import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.ItemFood;
@@ -30,5 +30,17 @@ public class BTJItems {
 
     public static void register() {
         LOGGER.info("Registering items");
+
+        LOGGER.info("Modifying items");
+
+        BTWItems.firePlough = BTWItems.firePlough
+                .setTextureName("btj:flint_and_loose_rock")
+                .setUnlocalizedName("flintAndLooseRock");
+        BTWItems.bowDrill = BTWItems.bowDrill
+                .setTextureName("btj:flint_and_flint")
+                .setUnlocalizedName("flintAndFlint");
+        Item.flintAndSteel = Item.flintAndSteel
+                .setTextureName("btj:flint_and_soulforged_steel")
+                .setUnlocalizedName("flintAndSoulforgedSteel");
     }
 }
