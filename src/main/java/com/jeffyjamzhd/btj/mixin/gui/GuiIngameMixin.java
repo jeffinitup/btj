@@ -68,7 +68,7 @@ public abstract class GuiIngameMixin extends Gui implements IGuiIngame {
     private int shiftPenaltyDisplay(int par2) {
 
         return par2 - this.curse_dm.getOffsetYRight() +
-                (this.mc.thePlayer.getAir() < 300 || this.mc.thePlayer.isInsideOfMaterial(Material.water) ? 10 : 0);
+                (this.mc.thePlayer.getAir() < 300 || this.mc.thePlayer.isInsideOfMaterial(Material.water) ? this.curse_dm.getOffsetYRight() : 0);
     }
 
     @Override
