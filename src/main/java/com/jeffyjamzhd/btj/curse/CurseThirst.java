@@ -6,6 +6,7 @@ import com.jeffyjamzhd.btj.api.hook.ExhaustionEvent;
 import com.jeffyjamzhd.btj.api.hook.FoodConsumedEvent;
 import com.jeffyjamzhd.btj.registry.BTJItems;
 import com.jeffyjamzhd.btj.registry.BTJPacket;
+import com.jeffyjamzhd.btj.registry.BTJSound;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.src.*;
@@ -81,17 +82,30 @@ public class CurseThirst extends AbstractCurseMeter implements FoodConsumedEvent
                 this.setValue(Math.max(0, this.getValue() + 200));
 
                 // Cosmetic stuff
-                this.spawnParticles(player, world);
+                this.spawnParticles(player, world, "bubble", 3);
                 player.playSound("random.drink", 0.5F + random.nextFloat() * 0.5F, 0.8F + random.nextFloat() * 0.4F);
+            }
+        } else if (world.isRainingAtPos(
+                MathHelper.floor_double(player.posX),
+                MathHelper.floor_double(player.posY + player.getEyeHeight()),
+                MathHelper.floor_double(player.posZ)) && player.rotationPitch <= -80.0F
+        ) {
+            // When raining at looking up
+            if (this.getUpdateCount() % 15 == 0) {
+                this.setValue(Math.max(0, this.getValue() + 100));
+
+                // Cosmetic stuff
+                this.spawnParticles(player, world, "splash", 10);
+                player.playSound(BTJSound.GARGLE.sound(), 0.5F + random.nextFloat() * 0.5F, 0.8F + random.nextFloat() * 0.4F);
             }
         }
 
     }
 
     /**
-     * Spawns bubble particles infront of the player's face
+     * Spawns particles infront of the player's face
      */
-    private void spawnParticles(EntityPlayer player, World world) {
+    private void spawnParticles(EntityPlayer player, World world, String particle, int amount) {
         Vec3 velVec = world.getWorldVec3Pool().getVecFromPool(((double)world.rand.nextFloat() - 0.5) * 0.1, Math.random() * 0.1 + 0.1, 0.0);
         velVec.rotateAroundX(-player.rotationPitch * (float)Math.PI / 180.0f);
         velVec.rotateAroundY(-player.rotationYaw * (float)Math.PI / 180.0f);
@@ -99,12 +113,12 @@ public class CurseThirst extends AbstractCurseMeter implements FoodConsumedEvent
         posVec.rotateAroundX(-player.rotationPitch * (float)Math.PI / 180.0f);
         posVec.rotateAroundY(-player.rotationYaw * (float)Math.PI / 180.0f);
         posVec = posVec.addVector(player.posX, player.posY + (double)player.getEyeHeight(), player.posZ);
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < amount; i++) {
             Vec3 varVec = world.getWorldVec3Pool().getVecFromPool(((double)world.rand.nextFloat() - 0.5) * 0.1, Math.random() * 0.1 + 0.1, 0.0);
             varVec.rotateAroundX(-player.rotationPitch * (float)Math.PI / 180.0f);
             varVec.rotateAroundY(-player.rotationYaw * (float)Math.PI / 180.0f);
             varVec = varVec.addVector(velVec);
-            world.spawnParticle("bubble",
+            world.spawnParticle(particle,
                     posVec.xCoord, posVec.yCoord, posVec.zCoord,
                     varVec.xCoord, varVec.yCoord + 0.3, varVec.zCoord);
         }
