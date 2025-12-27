@@ -1,24 +1,19 @@
 package com.jeffyjamzhd.btj.curse;
 
 import com.jeffyjamzhd.btj.api.curse.AbstractCurseMeter;
-import com.jeffyjamzhd.btj.api.curse.ICurse;
 import com.jeffyjamzhd.btj.api.hook.ExhaustionEvent;
 import com.jeffyjamzhd.btj.api.hook.FoodConsumedEvent;
 import com.jeffyjamzhd.btj.registry.BTJItems;
-import com.jeffyjamzhd.btj.registry.BTJPacket;
 import com.jeffyjamzhd.btj.registry.BTJSound;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.src.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Random;
-
-import static com.jeffyjamzhd.btj.BetterThanJosh.LOGGER;
 
 /**
  * Curse of Thirst!
@@ -63,7 +58,7 @@ public class CurseThirst extends AbstractCurseMeter implements FoodConsumedEvent
         int targetExhaustion = Math.min((int) (exhaustion * 300), 150);
         this.setValue(Math.max(0, this.getValue() - targetExhaustion));
         if (player.isClientWorld())
-            this.setShakeTicks((int) (exhaustion * 30));
+            this.setShakeTicks((int) (exhaustion * 50));
     }
 
     /**
@@ -125,31 +120,22 @@ public class CurseThirst extends AbstractCurseMeter implements FoodConsumedEvent
     }
 
     @Override
-    public void syncToClient(NetServerHandler handler) {
-        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        DataOutputStream dataStream = new DataOutputStream(byteStream);
+    public String getPacketIdentifier() {
+        return "btj|curseThrist";
+    }
 
-        try {
-            dataStream.writeInt(this.getValue());
-            dataStream.writeByte(this.updateCount);
-        } catch (IOException e) {
-            LOGGER.trace(e);
-        }
-
-        byte[] data = byteStream.toByteArray();
-        Packet250CustomPayload packet = new Packet250CustomPayload(BTJPacket.PACKET_CURSE_THIRST_S2C, data);
-        handler.sendPacketToPlayer(packet);
+    @Override
+    public void syncToClient(DataOutputStream stream) throws IOException {
+        super.syncToClient(stream);
+        stream.writeInt(this.getValue());
+        stream.writeByte(this.updateCount);
     }
 
     @Override
     @Environment(EnvType.CLIENT)
-    public void parseSyncPacket(DataInputStream stream) {
-        try {
-            this.setValue(stream.readInt());
-            this.updateCount = stream.readByte();
-        } catch (IOException e) {
-            LOGGER.trace(e);
-        }
+    public void syncFromServer(DataInputStream stream) throws IOException {
+        this.setValue(stream.readInt());
+        this.updateCount = stream.readByte();
     }
 
     @Override
@@ -173,13 +159,6 @@ public class CurseThirst extends AbstractCurseMeter implements FoodConsumedEvent
         nbt = super.readNBT(nbt);
         this.setValue(nbt.getInteger("ThirstValue"));
         return nbt;
-    }
-
-    @Override
-    public ICurse createInstance() {
-        CurseThirst curse = new CurseThirst();
-        curse.setIdentifier(this.getIdentifier());
-        return curse;
     }
 
     static {

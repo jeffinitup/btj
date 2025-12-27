@@ -42,7 +42,9 @@ public class BetterThanJosh extends BTWAddon {
     @Override
     public void postInitialize() {
         LOGGER.info("Sending out register events");
+
         RegistryEventCurse.init();
+        BTJPacket.postRegister(this);
     }
 
     public String getPrettyVerisonString() {

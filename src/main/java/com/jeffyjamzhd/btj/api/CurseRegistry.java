@@ -1,7 +1,8 @@
 package com.jeffyjamzhd.btj.api;
 
 import com.google.common.collect.HashBiMap;
-import com.jeffyjamzhd.btj.api.curse.ICurse;
+import com.jeffyjamzhd.btj.api.curse.AbstractCurse;
+import com.jeffyjamzhd.btj.api.curse.AbstractCurse;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -13,7 +14,7 @@ import static com.jeffyjamzhd.btj.BetterThanJosh.LOGGER;
  */
 public class CurseRegistry {
     public static final CurseRegistry INSTANCE = new CurseRegistry();
-    private static final HashBiMap<String, Class<? extends ICurse>> CURSES = HashBiMap.create();
+    private static final HashBiMap<String, Class<? extends AbstractCurse>> CURSES = HashBiMap.create();
     private static final Consumer<CurseInfo> REGISTRY = CurseRegistry::consumeCurse;
 
     /**
@@ -28,7 +29,7 @@ public class CurseRegistry {
      * Puts a curse object into the registry
      * @param curse Curse to register
      */
-    public void registerCurse(String id, Class<? extends ICurse> curse) {
+    public void registerCurse(String id, Class<? extends AbstractCurse> curse) {
         LOGGER.info("Incoming curse - {}", id);
         REGISTRY.accept(new CurseInfo(id, curse));
     }
@@ -36,14 +37,14 @@ public class CurseRegistry {
     /**
      * Gets a specific curse from the registry
      */
-    public Class<? extends ICurse> getCurse(String id) {
+    public Class<? extends AbstractCurse> getCurse(String id) {
         return CURSES.get(id);
     }
 
     /**
      * Gets a specific curse's identifier from the registry
      */
-    public String getIdentifier(Class<? extends ICurse> curse) {
+    public String getIdentifier(Class<? extends AbstractCurse> curse) {
         return CURSES.inverse().get(curse);
     }
 
@@ -52,12 +53,12 @@ public class CurseRegistry {
      * @param rng Random number generator
      * @return A random curse
      */
-    public Class<? extends ICurse> getRandomCurse(Random rng) {
+    public Class<? extends AbstractCurse> getRandomCurse(Random rng) {
         Object[] values = CURSES.values().toArray();
-        return (Class<? extends ICurse>) values[rng.nextInt(values.length)];
+        return (Class<? extends AbstractCurse>) values[rng.nextInt(values.length)];
     }
 
-    public HashBiMap<String, Class<? extends ICurse>> getCurses() {
+    public HashBiMap<String, Class<? extends AbstractCurse>> getCurses() {
         return CURSES;
     }
 
@@ -65,5 +66,5 @@ public class CurseRegistry {
         return CURSES.keySet().stream().toList();
     }
 
-    private record CurseInfo(String id, Class<? extends ICurse> curse) {}
+    private record CurseInfo(String id, Class<? extends AbstractCurse> curse) {}
 }

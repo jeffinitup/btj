@@ -1,6 +1,6 @@
 package com.jeffyjamzhd.btj.mixin.network;
 
-import com.jeffyjamzhd.btj.api.curse.ICurse;
+import com.jeffyjamzhd.btj.api.curse.AbstractCurse;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
@@ -21,8 +21,8 @@ public class MinecraftServerMixin {
     private void deactivateAllCurses(CallbackInfo ci) {
         for (Object object : this.serverConfigManager.playerEntityList) {
             if (object instanceof EntityPlayer player) {
-                List<ICurse> curses = player.btj$getCurseManager().getCurses();
-                for (ICurse curse : curses)
+                List<AbstractCurse> curses = player.btj$getCurseManager().getCurses();
+                for (AbstractCurse curse : curses)
                     curse.onDeactivation(player.worldObj, player);
             }
         }

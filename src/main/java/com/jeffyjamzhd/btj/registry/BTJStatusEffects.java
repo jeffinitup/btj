@@ -3,7 +3,7 @@ package com.jeffyjamzhd.btj.registry;
 import api.util.status.StatusEffect;
 import api.util.status.StatusEffectBuilder;
 import com.jeffyjamzhd.btj.api.CurseManager;
-import com.jeffyjamzhd.btj.api.curse.ICurse;
+import com.jeffyjamzhd.btj.api.curse.AbstractCurse;
 import com.jeffyjamzhd.btj.curse.CurseMITE;
 import com.jeffyjamzhd.btj.curse.CurseThirst;
 import com.jeffyjamzhd.btj.status.BTJStatusCategory;
@@ -58,7 +58,7 @@ public class BTJStatusEffects {
         effect.setEvaluator(player -> {
             if (!player.capabilities.isCreativeMode && player.btj$getCurseManager() != null) {
                 CurseManager man = player.btj$getCurseManager();
-                Optional<ICurse> curse = man.getCurse(BTJCurses.CURSE_MITE);
+                Optional<AbstractCurse> curse = man.getCurse(BTJCurses.CURSE_MITE);
                 if (curse.isPresent()) {
                     CurseMITE seedCurse = (CurseMITE) curse.get();
                     int value = seedCurse.getValue();
@@ -88,7 +88,7 @@ public class BTJStatusEffects {
         effect.setEvaluator(player -> {
             if (!player.capabilities.isCreativeMode && player.btj$getCurseManager() != null) {
                 CurseManager man = player.btj$getCurseManager();
-                Optional<ICurse> curse = man.getCurse(BTJCurses.CURSE_THIRST);
+                Optional<AbstractCurse> curse = man.getCurse(BTJCurses.CURSE_THIRST);
                 if (curse.isPresent()) {
                     CurseThirst thirstCurse = (CurseThirst) curse.get();
                     int value = thirstCurse.getValue();

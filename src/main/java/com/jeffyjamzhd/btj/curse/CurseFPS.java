@@ -1,7 +1,7 @@
 package com.jeffyjamzhd.btj.curse;
 
 import com.jeffyjamzhd.btj.api.curse.AbstractCurse;
-import com.jeffyjamzhd.btj.api.curse.ICurse;
+import com.jeffyjamzhd.btj.api.curse.AbstractCurse;
 import net.minecraft.src.I18n;
 
 /**
@@ -17,9 +17,7 @@ public class CurseFPS extends AbstractCurse {
     }
 
     @Override
-    public ICurse createInstance() {
-        CurseFPS curse = new CurseFPS();
-        curse.setIdentifier(this.getIdentifier());
-        return curse;
+    public boolean usePacketSystem() {
+        return false;
     }
 }

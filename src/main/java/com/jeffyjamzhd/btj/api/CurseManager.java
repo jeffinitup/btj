@@ -1,7 +1,7 @@
 package com.jeffyjamzhd.btj.api;
 
 import api.world.BlockPos;
-import com.jeffyjamzhd.btj.api.curse.ICurse;
+import com.jeffyjamzhd.btj.api.curse.AbstractCurse;
 import com.jeffyjamzhd.btj.api.hook.BlockBreakEvent;
 import com.jeffyjamzhd.btj.api.hook.BlockPlaceEvent;
 import com.jeffyjamzhd.btj.api.hook.ExhaustionEvent;
@@ -26,7 +26,7 @@ import static com.jeffyjamzhd.btj.BetterThanJosh.LOGGER;
  * Manages callbacks for curses a player currently has
  */
 public class CurseManager {
-    private final HashMap<String, ICurse> curses = new HashMap<>();
+    private final HashMap<String, AbstractCurse> curses = new HashMap<>();
     private boolean dirty = false;
     private boolean coldLoad = true;
 
@@ -41,7 +41,7 @@ public class CurseManager {
         }
 
         // Tick curses
-        for (ICurse curse : this.curses.values())
+        for (AbstractCurse curse : this.curses.values())
             if (!player.capabilities.isCreativeMode)
                 curse.onTick(world, player);
     }
@@ -50,7 +50,7 @@ public class CurseManager {
      * Called upon food consumption
      */
     public void consumeFoodCallback(EntityPlayer player, ItemStack food) {
-        for (ICurse curse : this.curses.values())
+        for (AbstractCurse curse : this.curses.values())
             if (curse instanceof FoodConsumedEvent cursePE && !player.capabilities.isCreativeMode)
                 cursePE.onFoodConsume(player, food);
     }
@@ -59,7 +59,7 @@ public class CurseManager {
      * Called upon successful block placement
      */
     public void blockPlaceCallback(EntityPlayer player, Block block) {
-        for (ICurse curse : this.curses.values())
+        for (AbstractCurse curse : this.curses.values())
             if (curse instanceof BlockPlaceEvent cursePE && !player.capabilities.isCreativeMode)
                 cursePE.onBlockPlace(player, block);
     }
@@ -68,13 +68,13 @@ public class CurseManager {
      * Called upon successful block break
      */
     public void blockBrokenCallback(EntityPlayer player, int block_id, BlockPos pos, int meta) {
-        for (ICurse curse : this.curses.values())
+        for (AbstractCurse curse : this.curses.values())
             if (curse instanceof BlockBreakEvent cursePE)
                 cursePE.onBlockBreak(player, block_id, pos, meta);
     }
 
     public void addExhaustionCallback(EntityPlayer player, float exhaustion) {
-        for (ICurse curse : this.curses.values()) {
+        for (AbstractCurse curse : this.curses.values()) {
             if (curse instanceof ExhaustionEvent cursePE) {
                 cursePE.onExhaustion(player, exhaustion);
             }
@@ -85,7 +85,7 @@ public class CurseManager {
         // Nest curse nbt into curses compound
         LOGGER.info("Writing curses to player {}", player.getCommandSenderName());
         NBTTagList nbtCurses = new NBTTagList("BTJCurse");
-        for (ICurse curse : this.curses.values()) {
+        for (AbstractCurse curse : this.curses.values()) {
             // Write in nested nbt
             LOGGER.info("Writing curse {} to player {}", curse.getIdentifier(), player.getCommandSenderName());
             NBTTagCompound data = new NBTTagCompound();
@@ -106,7 +106,7 @@ public class CurseManager {
                     // Tag compound is a curse
                     LOGGER.info("Reading curse {} from player {}", curseTag.getString("Identifier"), player.getCommandSenderName());
                     String identifier = curseTag.getString("Identifier");
-                    ICurse curse = this.applyCurseSilent(identifier, player);
+                    AbstractCurse curse = this.applyCurseSilent(identifier, player);
 
                     // Check null
                     if (curse == null) {
@@ -128,12 +128,12 @@ public class CurseManager {
      * @param id Curse identifier
      * @return Curse applied
      */
-    private ICurse applyCurseSilent(String id, EntityPlayer player) {
-        Class<? extends ICurse> curse = CurseRegistry.INSTANCE.getCurse(id);
-        boolean condition = this.curses.values().stream().anyMatch(iCurse -> iCurse.getIdentifier().equals(id));
+    private AbstractCurse applyCurseSilent(String id, EntityPlayer player) {
+        Class<? extends AbstractCurse> curse = CurseRegistry.INSTANCE.getCurse(id);
+        boolean condition = this.curses.values().stream().anyMatch(AbstractCurse -> AbstractCurse.getIdentifier().equals(id));
         if (!condition && curse != null) {
             try {
-                ICurse curseInstance = curse.getConstructor().newInstance();
+                AbstractCurse curseInstance = curse.getConstructor().newInstance();
                 this.curses.put(id, curseInstance);
                 if (player instanceof EntityPlayerMP mp) {
                     sendSyncPacketToClient(mp.playerNetServerHandler);
@@ -156,7 +156,7 @@ public class CurseManager {
      * @return If the curse was successfully added
      */
     public boolean applyCurse(String id, World world, EntityPlayer player) {
-        ICurse curse = applyCurseSilent(id, player);
+        AbstractCurse curse = applyCurseSilent(id, player);
         if (curse != null) {
             curse.onActivation(world, player);
             if (world.isRemote) {
@@ -176,7 +176,7 @@ public class CurseManager {
      * @return If the curse was successfully removed
      */
     public boolean removeCurse(String id, World world, EntityPlayer player) {
-        for (ICurse curse : this.curses.values()) {
+        for (AbstractCurse curse : this.curses.values()) {
             if (curse.getIdentifier().equals(id)) {
                 curse.onDeactivation(world, player);
                 boolean result = this.curses.remove(id, curse);
@@ -201,16 +201,16 @@ public class CurseManager {
      * Checks if a curse is currently within this CurseManager
      * @param clazz Registered curse class
      */
-    public boolean hasCurse(Class<? extends ICurse> clazz) {
+    public boolean hasCurse(Class<? extends AbstractCurse> clazz) {
         return this.curses.values().stream()
-                .anyMatch(iCurse -> iCurse.getClass().equals(clazz));
+                .anyMatch(AbstractCurse -> AbstractCurse.getClass().equals(clazz));
     }
 
     /**
      * Gets active curses
      * @return List of curses
      */
-    public List<ICurse> getCurses() {
+    public List<AbstractCurse> getCurses() {
         return this.curses.values().stream().toList();
     }
 
@@ -219,9 +219,9 @@ public class CurseManager {
      * @param id Curse identifier
      * @return Curse instance
      */
-    public Optional<ICurse> getCurse(String id) {
+    public Optional<AbstractCurse> getCurse(String id) {
         return this.curses.values().stream()
-                .filter(iCurse -> iCurse.getIdentifier().equals(id))
+                .filter(AbstractCurse -> AbstractCurse.getIdentifier().equals(id))
                 .findFirst();
     }
 
@@ -230,9 +230,9 @@ public class CurseManager {
      * @param curse Registered curse
      * @return Curse instance
      */
-    public Optional<ICurse> getCurse(Class<? extends ICurse> curse) {
+    public Optional<AbstractCurse> getCurse(Class<? extends AbstractCurse> curse) {
         return this.curses.values().stream()
-                .filter(iCurse -> iCurse.getClass().equals(curse))
+                .filter(AbstractCurse -> AbstractCurse.getClass().equals(curse))
                 .findFirst();
     }
 
@@ -254,7 +254,7 @@ public class CurseManager {
             this.coldLoad = false;
 
             // Write size of curse id and curse id
-            for (ICurse curse : this.curses.values()) {
+            for (AbstractCurse curse : this.curses.values()) {
                 dataStream.writeByte(curse.getIdentifier().length());
                 dataStream.writeBytes(curse.getIdentifier());
             }
@@ -277,7 +277,7 @@ public class CurseManager {
         byte len;
         try {
             // Clear old curse list
-            HashMap<String, ICurse> old = (HashMap<String, ICurse>) this.curses.clone();
+            HashMap<String, AbstractCurse> old = (HashMap<String, AbstractCurse>) this.curses.clone();
             this.curses.clear();
 
             // Get status of load
@@ -287,11 +287,11 @@ public class CurseManager {
             EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
             while ((len = stream.readByte()) != Byte.MIN_VALUE) {
                 String curse = new String(stream.readNBytes(len), StandardCharsets.US_ASCII);
-                if (!isColdLoad && old.values().stream().noneMatch(iCurse -> iCurse.getIdentifier().equals(curse)))
+                if (!isColdLoad && old.values().stream().noneMatch(AbstractCurse -> AbstractCurse.getIdentifier().equals(curse)))
                     this.applyCurse(curse, player.worldObj, player);
-                else if (old.values().stream().anyMatch(iCurse -> iCurse.getIdentifier().equals(curse))) {
-                    Optional<ICurse> existing = old.values().stream()
-                            .filter(iCurse -> iCurse.getIdentifier().equals(curse))
+                else if (old.values().stream().anyMatch(AbstractCurse -> AbstractCurse.getIdentifier().equals(curse))) {
+                    Optional<AbstractCurse> existing = old.values().stream()
+                            .filter(AbstractCurse -> AbstractCurse.getIdentifier().equals(curse))
                             .findFirst();
                     existing.ifPresent(incomingCurse -> this.curses.put(curse, incomingCurse));
                 } else {

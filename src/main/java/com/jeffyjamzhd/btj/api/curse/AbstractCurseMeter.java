@@ -7,7 +7,7 @@ import net.minecraft.src.*;
 
 import java.util.Random;
 
-public class AbstractCurseMeter extends AbstractCurse implements ICurseBar {
+public abstract class AbstractCurseMeter extends AbstractCurse implements ICurseBar {
     /**
      * Base texture BTJ curse meters use
      */
@@ -209,10 +209,5 @@ public class AbstractCurseMeter extends AbstractCurse implements ICurseBar {
 
     public int getUpdateCount() {
         return this.updateCount;
-    }
-
-    @Override
-    public ICurse createInstance() {
-        return new AbstractCurseMeter();
     }
 }

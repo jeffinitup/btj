@@ -2,23 +2,18 @@ package com.jeffyjamzhd.btj.curse;
 
 import api.world.BlockPos;
 import com.jeffyjamzhd.btj.api.curse.AbstractCurseMeter;
-import com.jeffyjamzhd.btj.api.curse.ICurse;
 import com.jeffyjamzhd.btj.api.hook.BlockBreakEvent;
 import com.jeffyjamzhd.btj.api.hook.FoodConsumedEvent;
 import com.jeffyjamzhd.btj.registry.BTJItems;
-import com.jeffyjamzhd.btj.registry.BTJPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.src.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
-
-import static com.jeffyjamzhd.btj.BetterThanJosh.LOGGER;
 
 /**
  * Curse of MITE, must eat seeds!
@@ -133,38 +128,20 @@ public class CurseMITE extends AbstractCurseMeter implements FoodConsumedEvent, 
     }
 
     @Override
-    public void syncToClient(NetServerHandler handler) {
-        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        DataOutputStream dataStream = new DataOutputStream(byteStream);
+    public String getPacketIdentifier() {
+        return "btj|curseMiTE";
+    }
 
-        try {
-            dataStream.writeInt(this.getValue());
-            dataStream.writeByte(this.updateCount);
-        } catch (IOException e) {
-            LOGGER.trace(e);
-        }
-
-        byte[] data = byteStream.toByteArray();
-        Packet250CustomPayload packet = new Packet250CustomPayload(BTJPacket.PACKET_CURSE_MITE_S2C, data);
-        handler.sendPacketToPlayer(packet);
+    @Override
+    public void syncToClient(DataOutputStream stream) throws IOException {
+        stream.writeInt(this.getValue());
+        stream.writeByte(this.updateCount);
     }
 
     @Override
     @Environment(EnvType.CLIENT)
-    public void parseSyncPacket(DataInputStream stream) {
-        try {
-            this.setValue(stream.readInt());
-            this.updateCount = stream.readByte();
-        } catch (IOException e) {
-            LOGGER.trace(e);
-        }
-    }
-
-    @Override
-    public ICurse createInstance() {
-        CurseMITE curse = new CurseMITE();
-        curse.setIdentifier(this.getIdentifier());
-        curse.dirty = true;
-        return curse;
+    public void syncFromServer(DataInputStream stream) throws IOException {
+        this.setValue(stream.readInt());
+        this.updateCount = stream.readByte();
     }
 }

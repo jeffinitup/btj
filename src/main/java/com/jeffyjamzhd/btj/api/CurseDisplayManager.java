@@ -1,6 +1,6 @@
 package com.jeffyjamzhd.btj.api;
 
-import com.jeffyjamzhd.btj.api.curse.ICurse;
+import com.jeffyjamzhd.btj.api.curse.AbstractCurse;
 import com.jeffyjamzhd.btj.api.curse.ICurseBar;
 import com.jeffyjamzhd.btj.registry.BTJSound;
 import com.jeffyjamzhd.btj.util.BTJMath;
@@ -42,7 +42,7 @@ public class CurseDisplayManager {
      */
     public void renderCurses(EntityPlayer player, GuiIngame gui, int left, int right, int height) {
         CurseManager man = player.btj$getCurseManager();
-        List<ICurse> curses = man.getCurses();
+        List<AbstractCurse> curses = man.getCurses();
 
         // Sort if necessary
         if (curses.size() != sortedCurses.size())
@@ -76,7 +76,7 @@ public class CurseDisplayManager {
         }
     }
 
-    public void beginRenderingCurse(ICurse curse) {
+    public void beginRenderingCurse(AbstractCurse curse) {
         Minecraft.getMinecraft().sndManager.playSoundFX(BTJSound.CURSE.sound(), 1.0F, 0.5F);
         this.curseStringsToRender = curse.getDisplayStrings();
         for (int i = 0; i < this.curseStringsToRender.length; i++)
@@ -127,15 +127,15 @@ public class CurseDisplayManager {
     /**
      * Sorts curses from highest to lowest render priority
      */
-    private void sortCurses(List<ICurse> curses) {
+    private void sortCurses(List<AbstractCurse> curses) {
         this.contentsLeft = 0;
         this.contentsRight = 0;
         this.sortedCurses = curses.stream()
-                .filter(iCurse -> iCurse instanceof ICurseBar)
-                .map(iCurse -> (ICurseBar) iCurse)
+                .filter(AbstractCurse -> AbstractCurse instanceof ICurseBar)
+                .map(AbstractCurse -> (ICurseBar) AbstractCurse)
                 .sorted(Comparator.comparingInt((ICurseBar::getDisplayPriority)))
                 .toList();
-        this.sortedCurses.forEach(iCurseBar -> this.contentsRight++);
+        this.sortedCurses.forEach(curseBar -> this.contentsRight++);
     }
 
     public int getOffsetYLeft() {
