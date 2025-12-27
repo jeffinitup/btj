@@ -9,9 +9,9 @@ menu.signers.back=Curse you, Franzy!
 
 credits.jeff.name=Jeff
 credits.jeff.desc=Addon author, debtor of Josh, proud&&father, happily married, divorced,&&and renowned court jester
-credits.franzy.name=Franzy14
+credits.franzy.name=Franzy
 credits.franzy.desc=Design assistance, Josh lore&&enthusiast, tech support god.&&Allegedly is a "Harold."
-credits.kitty.name=kittycat8332
+credits.kitty.name=Kitty
 credits.kitty.desc=Seed texture, artisan, drawer of&&things and stuff
 
 curse.btj.mite.name=Curse of MiTE
@@ -37,6 +37,9 @@ item.grassSeed.name=Grass Seed
 item.bowlOfWater.name=Bowl of Water
 item.caneShucking.name=Sugarcane Peeling
 item.peeledCane.name=Peeled Sugarcane
+item.btj.FlintandLooseRock=Flint and Loose Rock
+item.btj.FlintandFlint=Flint and Flint
+item.btj.FlintandSoulforgedSteelNugget=Flint and Soulforged Steel Nugget
 
 status.craving.craving=Craving
 status.craving.fiending=Fiending
