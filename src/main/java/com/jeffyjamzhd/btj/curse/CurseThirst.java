@@ -1,5 +1,6 @@
 package com.jeffyjamzhd.btj.curse;
 
+import btw.item.items.SoupItem;
 import com.jeffyjamzhd.btj.api.curse.AbstractCurseMeter;
 import com.jeffyjamzhd.btj.api.hook.ExhaustionEvent;
 import com.jeffyjamzhd.btj.api.hook.FoodConsumedEvent;
@@ -68,10 +69,14 @@ public class CurseThirst extends AbstractCurseMeter implements FoodConsumedEvent
         // Get random
         Random random = player.rand;
 
-        if (player.getAir() <= 0) {
-            // When drowning
-            this.setValue(Math.max(0, this.getValue() + 100));
-        } else if (player.isInsideOfMaterial(Material.water) && this.getValue() < this.getMaxValue() - 200) {
+        // Do not hydrate if user is eating or drinking already
+        if (player.isUsingItem() && player.getHeldItem() != null) {
+            EnumAction action = player.getHeldItem().getItemUseAction();
+            if (action.equals(EnumAction.eat) || action.equals(EnumAction.drink))
+                return;
+        }
+
+        if (player.isInsideOfMaterial(Material.water) && this.getValue() < this.getMaxValue() - 200) {
             // When underwater and not drowning
             if (this.getUpdateCount() % 20 == 0) {
                 this.setValue(Math.max(0, this.getValue() + 200));
@@ -164,14 +169,18 @@ public class CurseThirst extends AbstractCurseMeter implements FoodConsumedEvent
     static {
         for (Item item : Item.itemsList) {
             // Soups give minimal hydration
-            if (item instanceof ItemSoup) {
-                HYDRATION_VALUES.put(item.itemID, 500);
+            if (item instanceof ItemSoup || item instanceof SoupItem) {
+                HYDRATION_VALUES.put(item.itemID, 1000);
+            }
+
+            if (item instanceof ItemBucketMilk) {
+                HYDRATION_VALUES.put(item.itemID, 8000);
             }
         }
 
         HYDRATION_VALUES.put(Item.potion.itemID, 2000);
         HYDRATION_VALUES.put(BTJItems.BOWL_OF_WATER.itemID, 4000);
         HYDRATION_VALUES.put(Item.bread.itemID, -1000);
-        HYDRATION_VALUES.put(288, -8000); // Battotest baguette
+        HYDRATION_VALUES.put(544, -8000); // Battotest baguette
     }
 }
