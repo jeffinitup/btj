@@ -33,6 +33,7 @@ public class BetterThanJosh extends BTWAddon {
         BTJItems.register();
         BTJPacket.register(this);
         BTJSound.register();
+        BTJRecipes.register();
         BTJStatusEffects.createStatuses();
 
         LOGGER.info("{} Initialized.", this.getName());

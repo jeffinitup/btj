@@ -3,68 +3,52 @@ package com.jeffyjamzhd.btj.registry;
 import btw.item.BTWItems;
 import net.minecraft.src.*;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class BTJRecipes {
+    private static final HashSet<Integer> TO_REMOVE;
 
     public static void register() {
         removeOldRecipes();
         addNewRecipes();
     }
-    // kill old recipes
+
+    /**
+     * Remove recipes that have outputs defined in {@code TO_REMOVE}
+     */
     private static void removeOldRecipes() {
         CraftingManager manager = CraftingManager.getInstance();
-        List recipes = manager.getRecipeList();
+        List<? extends IRecipe> recipes = manager.getRecipeList();
 
-        Iterator it = recipes.iterator();
-        while (it.hasNext()) {
-            IRecipe recipe = (IRecipe) it.next();
-            ItemStack output = recipe.getRecipeOutput();
-
-            if (output == null) continue;
-
-            if (output.itemID == BTWItems.firePlough.itemID ||
-                    output.itemID == Item.flintAndSteel.itemID ||
-                         output.itemID == BTWItems.bowDrill.itemID) {
-
-                it.remove();
-            }
-        }
+        // Iterate and filter recipes targeted for removal
+        Set<? extends IRecipe> set = recipes.stream()
+                .filter(Objects::nonNull)
+                .filter(iRecipe -> iRecipe.getRecipeOutput() != null)
+                .collect(Collectors.toSet());
+        // Remove recipes
+        set.forEach(recipes::remove);
     }
-    // add new recipes
+
+    /**
+     * Add BTJ recipes
+     */
     private static void addNewRecipes() {
+        CraftingManager.getInstance().addShapelessRecipe(
+                new ItemStack(BTWItems.firePlough, 1), Item.flint, BTWItems.stone);
+        CraftingManager.getInstance().addShapelessRecipe(
+                new ItemStack(BTWItems.bowDrill, 1), Item.flint, Item.flint);
+        CraftingManager.getInstance().addShapelessRecipe(
+                new ItemStack(Item.flintAndSteel, 1), BTWItems.steelNugget, Item.flint);
+    }
 
-        CraftingManager.getInstance().addRecipe(
-                new ItemStack(BTWItems.firePlough, 1),
-                new Object[] {
-                        "YX",
-                        'X', Item.flint,
-                        'Y', BTWItems.stone
-                }
-        );
+    static {
+        TO_REMOVE = new HashSet<>();
 
-        CraftingManager.getInstance().addRecipe(
-                new ItemStack(BTWItems.bowDrill, 1),
-                new Object[] {
-                        "XX",
-                        'X', Item.flint
-                }
-        );
-
-        CraftingManager.getInstance().addRecipe(
-                new ItemStack(Item.flintAndSteel, 1),
-                new Object[] {
-                        "YX",
-                        'X', Item.flint,
-                        'Y', BTWItems.steelNugget
-                }
-        );
-
-
-
-
-
+        // These outputs are removed from standard crafting grid recipes
+        TO_REMOVE.add(Item.flintAndSteel.itemID);
+        TO_REMOVE.add(BTWItems.firePlough.itemID);
+        TO_REMOVE.add(BTWItems.bowDrill.itemID);
     }
 }
 
