@@ -1,7 +1,7 @@
-package com.jeffyjamzhd.btj.api.event.curse;
+package com.jeffyjamzhd.btj.api.registry;
 
 import com.jeffyjamzhd.btj.api.CurseRegistry;
 
-public interface EventCurseListener {
+public interface RegistryEventCurseListener {
     void register(CurseRegistry registry);
 }

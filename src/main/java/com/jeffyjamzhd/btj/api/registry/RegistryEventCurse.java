@@ -1,4 +1,4 @@
-package com.jeffyjamzhd.btj.api.event.curse;
+package com.jeffyjamzhd.btj.api.registry;
 
 import com.jeffyjamzhd.btj.api.CurseRegistry;
 
@@ -10,13 +10,13 @@ import static com.jeffyjamzhd.btj.BetterThanJosh.LOGGER;
 /**
  * Curse registry event
  */
-public class EventCurse {
-    private static final List<EventCurseListener> LISTENERS = new ArrayList<>();
+public class RegistryEventCurse {
+    private static final List<RegistryEventCurseListener> LISTENERS = new ArrayList<>();
 
     /**
      * Registers provided listener
      */
-    public static void register(EventCurseListener listener) {
+    public static void register(RegistryEventCurseListener listener) {
         LISTENERS.add(listener);
     }
 
@@ -24,7 +24,7 @@ public class EventCurse {
      * Called when time to register
      */
     public static void init() {
-        for (EventCurseListener listener : LISTENERS) {
+        for (RegistryEventCurseListener listener : LISTENERS) {
             LOGGER.info("Curse register - {}", listener.getClass().getSimpleName());
             listener.register(CurseRegistry.INSTANCE);
         }

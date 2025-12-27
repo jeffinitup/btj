@@ -26,11 +26,11 @@ public class AbstractCurse implements ICurse {
     protected boolean dirty;
 
     public AbstractCurse() {
-        this.dirty = true;
         this.init();
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
             this.clientInit();
         }
+        this.dirty = true;
     }
 
     @Override

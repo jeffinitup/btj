@@ -1,7 +1,7 @@
 package com.jeffyjamzhd.btj;
 
 import api.BTWAddon;
-import com.jeffyjamzhd.btj.api.event.curse.EventCurse;
+import com.jeffyjamzhd.btj.api.registry.RegistryEventCurse;
 import com.jeffyjamzhd.btj.command.CommandCurse;
 import com.jeffyjamzhd.btj.registry.*;
 import com.llamalad7.mixinextras.MixinExtrasBootstrap;
@@ -27,7 +27,7 @@ public class BetterThanJosh extends BTWAddon {
     public void initialize() {
         LOGGER.info("{} Version {} Initializing...", this.getName(), this.getVersionString());
 
-        EventCurse.register(new BTJCurses());
+        RegistryEventCurse.register(new BTJCurses());
         registerAddonCommand(new CommandCurse());
 
         BTJItems.register();
@@ -41,7 +41,7 @@ public class BetterThanJosh extends BTWAddon {
     @Override
     public void postInitialize() {
         LOGGER.info("Sending out register events");
-        EventCurse.init();
+        RegistryEventCurse.init();
     }
 
     public String getPrettyVerisonString() {

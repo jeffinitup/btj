@@ -66,8 +66,9 @@ public abstract class GuiIngameMixin extends Gui implements IGuiIngame {
 
     @ModifyArg(method = "drawPenaltyText", at = @At(value = "INVOKE", target = "Lnet/minecraft/src/FontRenderer;drawStringWithShadow(Ljava/lang/String;III)I"), index = 2)
     private int shiftPenaltyDisplay(int par2) {
-        return par2 -
-                (this.mc.thePlayer.getAir() < 300 || this.mc.thePlayer.isInsideOfMaterial(Material.water) ? 10 : this.curse_dm.getOffsetYRight());
+
+        return par2 - this.curse_dm.getOffsetYRight() +
+                (this.mc.thePlayer.getAir() < 300 || this.mc.thePlayer.isInsideOfMaterial(Material.water) ? 10 : 0);
     }
 
     @Override

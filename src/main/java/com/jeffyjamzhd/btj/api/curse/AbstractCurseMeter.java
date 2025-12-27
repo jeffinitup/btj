@@ -26,12 +26,12 @@ public class AbstractCurseMeter extends AbstractCurse implements ICurseBar {
     /**
      * Value of this bar
      */
-    protected int value = 0;
+    protected int value;
 
     /**
      * Max value of this bar
      */
-    protected int maxValue = 10000;
+    protected int maxValue;
 
     /**
      * Texture location
@@ -52,10 +52,16 @@ public class AbstractCurseMeter extends AbstractCurse implements ICurseBar {
     private int sizeY;
 
     /**
-     * Chance for this each pip to shake
+     * Chance for each pip to shake
      */
     @Environment(EnvType.CLIENT)
     protected float shakeChance = 0F;
+
+    /**
+     * Ticks to shake pips for
+     */
+    @Environment(EnvType.CLIENT)
+    protected int shakeTicks = 0;
 
     /**
      * Offsets to apply to pips. Not to be directly modified
@@ -118,8 +124,20 @@ public class AbstractCurseMeter extends AbstractCurse implements ICurseBar {
     @Environment(EnvType.CLIENT)
     public void drawUpdateTick(GuiIngame gui) {
         Random rand = gui.btj$getFontRenderer().fontRandom;
-        for (int i = 0; i <= 9; i++)
-            this.shakeOffsets[i] = rand.nextFloat() < this.shakeChance ? rand.nextInt(3) - 1 : 0;
+        for (int i = 0; i <= 9; i++) {
+            // Force shake if ticks over 0
+            if (this.shakeTicks > 0) {
+                this.shakeOffsets[i] = rand.nextInt(3) - 1;
+                continue;
+            }
+
+            // Otherwise random chance
+            int shakeY = rand.nextFloat() < this.shakeChance ? rand.nextInt(3) - 1 : 0;
+            this.shakeOffsets[i] = shakeY;
+        }
+
+        // Decrement shake ticks if over 0
+        this.shakeTicks = this.shakeTicks > 0 ? this.shakeTicks - 1 : this.shakeTicks;
     }
 
     @Override
@@ -177,9 +195,16 @@ public class AbstractCurseMeter extends AbstractCurse implements ICurseBar {
         this.value = Math.min(value, this.maxValue);
     }
 
+    public void setShakeTicks(int ticks) {
+        this.shakeTicks = Math.max(0, ticks);
+    }
+
     public void bumpUpdateCount() {
         this.updateCount += 1;
-        this.updateCount = this.updateCount > 100 ? 0 : this.updateCount;
+        if (this.updateCount >= 100) {
+            this.dirty = true;
+            this.updateCount = 0;
+        }
     }
 
     public int getUpdateCount() {

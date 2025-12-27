@@ -10,6 +10,7 @@
     "inventory.InventoryPlayerMixin",
     "item.ItemFoodMixin",
     "item.ItemMixin",
+    "item.ItemPotionMixin",
     "network.MinecraftServerMixin",
     "network.PacketMixin"
   ],

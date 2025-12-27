@@ -2,7 +2,10 @@ package com.jeffyjamzhd.btj.api;
 
 import api.world.BlockPos;
 import com.jeffyjamzhd.btj.api.curse.ICurse;
-import com.jeffyjamzhd.btj.api.curse.IPlayerEvents;
+import com.jeffyjamzhd.btj.api.hook.BlockBreakEvent;
+import com.jeffyjamzhd.btj.api.hook.BlockPlaceEvent;
+import com.jeffyjamzhd.btj.api.hook.ExhaustionEvent;
+import com.jeffyjamzhd.btj.api.hook.FoodConsumedEvent;
 import com.jeffyjamzhd.btj.registry.BTJPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -12,10 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -51,7 +51,7 @@ public class CurseManager {
      */
     public void consumeFoodCallback(EntityPlayer player, ItemStack food) {
         for (ICurse curse : this.curses.values())
-            if (curse instanceof IPlayerEvents cursePE && !player.capabilities.isCreativeMode)
+            if (curse instanceof FoodConsumedEvent cursePE && !player.capabilities.isCreativeMode)
                 cursePE.onFoodConsume(player, food);
     }
 
@@ -60,7 +60,7 @@ public class CurseManager {
      */
     public void blockPlaceCallback(EntityPlayer player, Block block) {
         for (ICurse curse : this.curses.values())
-            if (curse instanceof IPlayerEvents cursePE && !player.capabilities.isCreativeMode)
+            if (curse instanceof BlockPlaceEvent cursePE && !player.capabilities.isCreativeMode)
                 cursePE.onBlockPlace(player, block);
     }
 
@@ -69,8 +69,16 @@ public class CurseManager {
      */
     public void blockBrokenCallback(EntityPlayer player, int block_id, BlockPos pos, int meta) {
         for (ICurse curse : this.curses.values())
-            if (curse instanceof IPlayerEvents cursePE)
+            if (curse instanceof BlockBreakEvent cursePE)
                 cursePE.onBlockBreak(player, block_id, pos, meta);
+    }
+
+    public void addExhaustionCallback(EntityPlayer player, float exhaustion) {
+        for (ICurse curse : this.curses.values()) {
+            if (curse instanceof ExhaustionEvent cursePE) {
+                cursePE.onExhaustion(player, exhaustion);
+            }
+        }
     }
 
     public void writeNBT(NBTTagCompound compound, EntityPlayer player) {

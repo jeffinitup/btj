@@ -3,12 +3,12 @@ package com.jeffyjamzhd.btj.curse;
 import api.world.BlockPos;
 import com.jeffyjamzhd.btj.api.curse.AbstractCurseMeter;
 import com.jeffyjamzhd.btj.api.curse.ICurse;
-import com.jeffyjamzhd.btj.api.curse.IPlayerEvents;
+import com.jeffyjamzhd.btj.api.hook.BlockBreakEvent;
+import com.jeffyjamzhd.btj.api.hook.FoodConsumedEvent;
 import com.jeffyjamzhd.btj.registry.BTJItems;
 import com.jeffyjamzhd.btj.registry.BTJPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.src.*;
 
 import java.io.ByteArrayOutputStream;
@@ -23,7 +23,7 @@ import static com.jeffyjamzhd.btj.BetterThanJosh.LOGGER;
 /**
  * Curse of MITE, must eat seeds!
  */
-public class CurseMITE extends AbstractCurseMeter implements IPlayerEvents {
+public class CurseMITE extends AbstractCurseMeter implements FoodConsumedEvent, BlockBreakEvent {
     private static final int[] lowrateBiomes = new int[]{
         BiomeGenBase.swampland.biomeID,
         BiomeGenBase.extremeHills.biomeID,
