@@ -1,7 +1,7 @@
 package com.jeffyjamzhd.btj.curse;
 
 import btw.item.items.SoupItem;
-import com.jeffyjamzhd.btj.api.curse.AbstractCurseMeter;
+import com.jeffyjamzhd.btj.api.curse.AbstractCurseHotbarMeter;
 import com.jeffyjamzhd.btj.api.hook.ExhaustionEvent;
 import com.jeffyjamzhd.btj.api.hook.FoodConsumedEvent;
 import com.jeffyjamzhd.btj.registry.BTJItems;
@@ -20,7 +20,7 @@ import java.util.Random;
  * Curse of Thirst!
  * Realism at its finest!
  */
-public class CurseThirst extends AbstractCurseMeter implements FoodConsumedEvent, ExhaustionEvent {
+public class CurseThirst extends AbstractCurseHotbarMeter implements FoodConsumedEvent, ExhaustionEvent {
     private static final HashMap<Integer, Integer> HYDRATION_VALUES = new HashMap<>();
 
     @Override

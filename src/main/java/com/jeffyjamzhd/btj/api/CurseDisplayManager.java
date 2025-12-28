@@ -1,7 +1,6 @@
 package com.jeffyjamzhd.btj.api;
 
-import com.jeffyjamzhd.btj.api.curse.AbstractCurse;
-import com.jeffyjamzhd.btj.api.curse.ICurseBar;
+import com.jeffyjamzhd.btj.api.curse.*;
 import com.jeffyjamzhd.btj.registry.BTJSound;
 import com.jeffyjamzhd.btj.util.BTJMath;
 import net.fabricmc.api.EnvType;
@@ -12,7 +11,6 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Manages the display of the client player's curses
@@ -22,7 +20,7 @@ public class CurseDisplayManager {
     /**
      * Curses copied from client player, sorted by render priority
      */
-    private List<ICurseBar> sortedCurses = new ArrayList<>();
+    private List<ICurseHotbarRender> sortedCurses = new ArrayList<>();
 
 
     private byte contentsLeft = 0;
@@ -33,14 +31,29 @@ public class CurseDisplayManager {
     private boolean playedCaveSound;
 
     /**
-     * Renders all curse bars
+     * Basic curse render logic
+     * @param player Player
+     * @param gui GuiIngame
+     */
+    public void renderCurseGeneric(EntityPlayer player, GuiIngame gui) {
+        CurseManager man = player.btj$getCurseManager();
+        List<AbstractCurse> curses = man.getCurses();
+
+        curses.stream()
+                .filter(curse -> curse instanceof ICurseRender)
+                .map(curse -> (ICurseRender) curse)
+                .forEach(curse -> curse.draw(gui));
+    }
+
+    /**
+     * Renders all curse bars (layered bars that stack ontop of eachother)
      * @param player Player
      * @param gui GuiIngame
      * @param left HUD left margin
      * @param right HUD right margin
      * @param height HUD base height
      */
-    public void renderCurses(EntityPlayer player, GuiIngame gui, int left, int right, int height) {
+    public void renderCurseBars(EntityPlayer player, GuiIngame gui, int left, int right, int height) {
         CurseManager man = player.btj$getCurseManager();
         List<AbstractCurse> curses = man.getCurses();
 
@@ -51,7 +64,7 @@ public class CurseDisplayManager {
         // Render curses
         int factor = 10;
         ResourceLocation last = null;
-        for (ICurseBar curse : sortedCurses) {
+        for (ICurseHotbarRender curse : sortedCurses) {
             // Bind texture
             if (last != curse.getTexture())
                 Minecraft.getMinecraft().getTextureManager().bindTexture(curse.getTexture());
@@ -71,7 +84,7 @@ public class CurseDisplayManager {
         if (sortedCurses.isEmpty())
             return;
 
-        for (ICurseBar curse : sortedCurses) {
+        for (ICurseHotbarRender curse : sortedCurses) {
             curse.drawUpdateTick(gui);
         }
     }
@@ -131,9 +144,9 @@ public class CurseDisplayManager {
         this.contentsLeft = 0;
         this.contentsRight = 0;
         this.sortedCurses = curses.stream()
-                .filter(AbstractCurse -> AbstractCurse instanceof ICurseBar)
-                .map(AbstractCurse -> (ICurseBar) AbstractCurse)
-                .sorted(Comparator.comparingInt((ICurseBar::getDisplayPriority)))
+                .filter(AbstractCurse -> AbstractCurse instanceof ICurseHotbarRender)
+                .map(AbstractCurse -> (ICurseHotbarRender) AbstractCurse)
+                .sorted(Comparator.comparingInt((ICurseHotbarRender::getDisplayPriority)))
                 .toList();
         this.sortedCurses.forEach(curseBar -> this.contentsRight++);
     }

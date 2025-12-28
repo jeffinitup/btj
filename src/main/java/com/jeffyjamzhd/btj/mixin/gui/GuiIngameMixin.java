@@ -33,7 +33,8 @@ public abstract class GuiIngameMixin extends Gui implements IGuiIngame {
             @Local(name = "var11") int left,
             @Local(name = "var12") int right,
             @Local(name = "var13") int height) {
-        this.curse_dm.renderCurses(this.mc.thePlayer, ((GuiIngame) (Object) this), left, right, height);
+        this.curse_dm.renderCurseGeneric(this.mc.thePlayer, (GuiIngame) (Object) this);
+        this.curse_dm.renderCurseBars(this.mc.thePlayer, (GuiIngame) (Object) this, left, right, height);
     }
 
     @Inject(method = "updateTick", at = @At("TAIL"))

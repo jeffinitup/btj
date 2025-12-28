@@ -1,7 +1,7 @@
 package com.jeffyjamzhd.btj.curse;
 
 import api.world.BlockPos;
-import com.jeffyjamzhd.btj.api.curse.AbstractCurseMeter;
+import com.jeffyjamzhd.btj.api.curse.AbstractCurseHotbarMeter;
 import com.jeffyjamzhd.btj.api.hook.BlockBreakEvent;
 import com.jeffyjamzhd.btj.api.hook.FoodConsumedEvent;
 import com.jeffyjamzhd.btj.registry.BTJItems;
@@ -18,7 +18,7 @@ import java.util.Random;
 /**
  * Curse of MITE, must eat seeds!
  */
-public class CurseMITE extends AbstractCurseMeter implements FoodConsumedEvent, BlockBreakEvent {
+public class CurseMITE extends AbstractCurseHotbarMeter implements FoodConsumedEvent, BlockBreakEvent {
     private static final int[] lowrateBiomes = new int[]{
         BiomeGenBase.swampland.biomeID,
         BiomeGenBase.extremeHills.biomeID,
